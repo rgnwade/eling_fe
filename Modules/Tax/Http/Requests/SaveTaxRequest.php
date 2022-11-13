@@ -35,7 +35,7 @@ class SaveTaxRequest extends Request
      *
      * @return array
      */
-    protected function validationData()
+    public function validationData()
     {
         return request()->merge([
             'rates' => $this->filter($this->rates ?? []),

@@ -9,10 +9,12 @@ use Modules\Coupon\Entities\Coupon;
 use Modules\Product\Entities\Product;
 use Modules\Shipping\Facades\ShippingMethod;
 use Darryldecode\Cart\Cart as DarryldecodeCart;
+use Darryldecode\Cart\CartCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-
+use Illuminate\Support\Str;
 class Cart extends DarryldecodeCart
 {
+    const down_payment_percent = '30%';
     /**
      * Collection of all cart item.
      *
@@ -40,6 +42,13 @@ class Cart extends DarryldecodeCart
      * @var \Illuminate\Support\Collection
      */
     private $taxes;
+
+    /**
+     * Collection of cart taxes.
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    private $paymentTerm;
 
     /**
      * Get the current instance.
@@ -71,19 +80,25 @@ class Cart extends DarryldecodeCart
      * @param array $options
      * @return $this
      */
-    public function store($productId, $qty, $options = [])
+    public function store($productId, $qty, $options = [], $details = [])
     {
+
         $product = Product::with('files', 'categories', 'taxClass')->findOrFail($productId);
         $options = array_filter($options);
-
+        $this->removeOldShippingMethod();
+        $id = "product_id.{$product->id}:options." . serialize($options);
+        if($product->isVideotron()){
+            $id = $id.Str::random(40);
+        }
         return $this->add([
-            'id' => "product_id.{$product->id}:options." . serialize($options),
+            'id' => $id,
             'name' => $product->name,
             'price' => $product->selling_price->amount(),
             'quantity' => $qty,
             'attributes' => [
                 'product' => $product,
                 'options' => $this->options($product, $options),
+                'details' => $details,
             ],
         ]);
     }
@@ -100,6 +115,7 @@ class Cart extends DarryldecodeCart
 
     public function updateQuantity($id, $qty)
     {
+        $this->removeOldShippingMethod();
         $this->update($id, [
             'quantity' => [
                 'relative' => false,
@@ -108,9 +124,57 @@ class Cart extends DarryldecodeCart
         ]);
     }
 
+    public function show()
+    {
+        $items = Cart::items();
+        $cartItems = [];
+        foreach ($items as $item) {
+            $cartItems[] = $this->buildItem($item);
+        }
+
+        usort($cartItems, function ($item1, $item2) {
+            return $item1['sort_value'] <=> $item2['sort_value'];
+        });;
+
+        return [
+            "cart_items" => $cartItems,
+            "taxes" => $this->taxes(),
+            "coupon_code" => $this->hasCoupon() ? $this->coupon()->code() : '',
+            "coupon_amount" => $this->hasCoupon() ? $this->coupon()->value()->convertToCurrentCurrency()->format() : '',
+            'subtotal' => $this->subTotal()->convertToCurrentCurrency()->format(),
+            'total_amount' => $this->total()->convertToCurrentCurrency()->format(),
+            'total_weight' => $this->getWeightTotal() . " Kg",
+            'shipping_cost' => $this->shippingMethod()->cost()->convertToCurrentCurrency()->format()
+        ];
+    }
+
+    private function buildItem($item)
+    {
+        $weight = $item->product->weight;
+        return [
+            "id" => encrypt($item->id),
+            "product_id" => $item->product->id,
+            "weight" => $item->product->weight . " Kg",
+            "manage_stock" => $item->product->manage_stock,
+            "stock" => $item->product->manage_stock ? $item->product->qty : '',
+            "image" => $item->product->base_image->thumb,
+            "name" => $item->product->name,
+            "unit" => $item->product->unit,
+            "isVideotron" => $item->product->isVideotron(),
+            "quantity" => $item->qty,
+            "price" => $item->unitPrice()->convertToCurrentCurrency()->format(),
+            "sort_value" => $item->unitPrice()->amount() + $item->product->id,
+            "total_weight" => ($weight * $item->qty) . " Kg",
+            "subtotal" => $item->total()->convertToCurrentCurrency()->format(),
+            "slug" => route('products.show', $item->product->slug),
+            "options" => $item->options,
+            "details" => $item->details
+        ];
+    }
+
     public function items()
     {
-        if (! is_null($this->items)) {
+        if (!is_null($this->items)) {
             return $this->items;
         }
 
@@ -118,6 +182,12 @@ class Cart extends DarryldecodeCart
             return new CartItem($item);
         });
     }
+
+    public function getContent()
+    {
+        return (new CartCollection($this->session->get($this->sessionKeyCartItems)));
+    }
+
 
     public function crossSellProducts()
     {
@@ -172,7 +242,7 @@ class Cart extends DarryldecodeCart
 
     public function hasNoAvailableShippingMethod()
     {
-        return ! $this->hasAvailableShippingMethod();
+        return !$this->hasAvailableShippingMethod();
     }
 
     public function availableShippingMethods()
@@ -187,11 +257,11 @@ class Cart extends DarryldecodeCart
 
     public function shippingMethod()
     {
-        if (! $this->hasShippingMethod()) {
+        if (!$this->hasShippingMethod()) {
             return new NullCartShippingMethod;
         }
 
-        if (! is_null($this->shippingMethod)) {
+        if (!is_null($this->shippingMethod)) {
             return $this->shippingMethod;
         }
 
@@ -251,11 +321,11 @@ class Cart extends DarryldecodeCart
 
     public function coupon()
     {
-        if (! $this->hasCoupon()) {
+        if (!$this->hasCoupon()) {
             return new NullCartCoupon;
         }
 
-        if (! is_null($this->coupon)) {
+        if (!is_null($this->coupon)) {
             return $this->coupon;
         }
 
@@ -312,13 +382,62 @@ class Cart extends DarryldecodeCart
         return $this->getConditionsByType('tax')->isNotEmpty();
     }
 
-    public function taxes()
+    public function hasPaymentTerm()
     {
-        if (! $this->hasTax()) {
+        return $this->getConditionsByType('payment_term')->isNotEmpty();
+    }
+
+    public function paymentTerm()
+    {
+        if (!$this->hasPaymentTerm()) {
             return new Collection;
         }
 
-        if (! is_null($this->taxes)) {
+        if (!is_null($this->paymentTerm)) {
+            return $this->paymentTerm;
+        }
+        $conditions = $this->getConditionsByType('payment_term')->first();
+        $down_payment_percent =  $conditions->getAttribute('down_payment_percent');
+
+        return $this->paymentTerm = new CartPaymentTerm($this, $down_payment_percent);
+    }
+
+    public function removeOldPaymentTerm()
+    {
+        $this->removeConditionsByType('payment_term');
+    }
+
+    public function applyDownPayment($down_payment_percent)
+    {
+        $this->removeOldPaymentTerm();
+
+        $this->condition(new CartCondition([
+            'name' => 'advance payment',
+            'type' => 'payment_term',
+            'target' => 'subtotal',
+            'value' => '0',
+            'order' => 4,
+            'attributes' => [
+                'down_payment_percent' => $down_payment_percent,
+            ],
+        ]));
+
+        return $this->paymentTerm();
+    }
+
+    public function applyFullPayment()
+    {
+        $this->removeOldPaymentTerm();
+        return $this->paymentTerm();
+    }
+
+    public function taxes()
+    {
+        if (!$this->hasTax()) {
+            return new Collection;
+        }
+
+        if (!is_null($this->taxes)) {
             return $this->taxes;
         }
 
@@ -328,7 +447,6 @@ class Cart extends DarryldecodeCart
 
         return $this->taxes = $taxConditions->map(function ($taxCondition) use ($taxRates) {
             $taxRate = $taxRates->where('id', $taxCondition->getAttribute('tax_rate_id'))->first();
-
             return new CartTax($this, $taxRate, $taxCondition);
         });
     }
@@ -394,10 +512,23 @@ class Cart extends DarryldecodeCart
             ->add($this->optionsPrice());
     }
 
+    public function subTotalPercent($percent = 1)
+    {
+        $subtotal = $this->total()->amount() * $percent;
+        return Money::inDefaultCurrency($subtotal);
+    }
+
     public function getWeightTotal()
     {
-         return $this->items()->sum(function ($cartItem) {
+        return $this->items()->sum(function ($cartItem) {
             return $cartItem->qty * $cartItem->product->weight;
+        });
+    }
+
+    public function getDimensionTotal()
+    {
+        return $this->items()->sum(function ($cartItem) {
+            return $cartItem->qty * ($cartItem->product->length * $cartItem->product->height * $cartItem->product->width ) ;
         });
     }
 

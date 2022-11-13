@@ -48,6 +48,11 @@ class CurrencyRate extends Model
         }
     }
 
+    public static function currentUSD()
+    {
+       return  static::where('currency', 'USD')->first()->rate;
+    }
+
     /**
      * Get currency rate for the given currency.
      *

@@ -31,6 +31,7 @@ class SaveCouponRequest extends Request
             'is_active' => 'required|boolean',
             'minimum_spend' => 'nullable|numeric|min:0|max:99999999999999',
             'maximum_spend' => 'nullable|numeric|min:0|max:99999999999999',
+            'maximum_discount' => 'nullable|numeric|min:0|max:99999999999999',
             'usage_limit_per_coupon' => 'nullable|numeric|min:0|max:4294967295',
             'usage_limit_per_customer' => 'nullable|numeric|min:0|max:4294967295',
         ];

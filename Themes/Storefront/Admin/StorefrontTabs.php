@@ -34,6 +34,8 @@ class StorefrontTabs extends Tabs
             ->add($this->productCarousel())
             ->add($this->recentProducts())
             ->add($this->bannerSectionTwo())
+            ->add($this->bannerPopUp())
+            ->add($this->couponEmail())
             ->add($this->threeColumnVerticalProductCarousel())
             ->add($this->landscapeProducts())
             ->add($this->bannerSectionThree())
@@ -80,8 +82,8 @@ class StorefrontTabs extends Tabs
             $footerLogo = File::findOrNew(setting('storefront_footer_logo'));
             $mailLogo = File::findOrNew(setting('storefront_mail_logo'));
             $shippingPayment = File::findOrNew(setting('storefront_shipping_payment'));
-
-            $tab->view('admin.storefront.tabs.logo', compact('favicon', 'headerLogo', 'footerLogo', 'mailLogo', 'shippingPayment'));
+            $certified = File::findOrNew(setting('certified'));
+            $tab->view('admin.storefront.tabs.logo', compact('favicon', 'headerLogo', 'footerLogo', 'mailLogo', 'shippingPayment','certified'));
         });
     }
 
@@ -191,6 +193,27 @@ class StorefrontTabs extends Tabs
             ]);
         });
     }
+    
+    private function bannerPopUp()
+    {
+        return tap(new Tab('banner_pop_up', trans('storefront::storefront.tabs.banner_pop_up')), function (Tab $tab) {
+            $tab->weight(37);
+            $tab->view('admin.storefront.tabs.banner_pop_up', [
+                'banner' => Banner::findByName('storefront_banner_pop_up_banner'),
+            ]);
+        });
+    }
+
+    private function couponEmail()
+    {
+        return tap(new Tab('coupon_email', 'Coupon email'), function (Tab $tab) {
+            $tab->weight(37);
+            $tab->view('admin.storefront.tabs.coupon_email', [
+                'banner' => Banner::findByName('storefront_coupon_email_banner'),
+            ]);
+        });
+    }
+
 
     private function threeColumnVerticalProductCarousel()
     {

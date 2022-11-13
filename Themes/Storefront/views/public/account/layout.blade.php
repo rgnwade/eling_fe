@@ -23,10 +23,26 @@
                             </a>
                         </li>
 
+                        @if(Auth::user()->isUncompletedAccount())
+                        <li class="{{ request()->routeIs('account.completion.index') ? 'active' : '' }}">
+                            <a href="{{ route('account.completion.index') }}">
+                                <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                {{ trans('storefront::account.links.complete_registration') }}
+                            </a>
+                        </li>
+                        @endif
+
                         <li class="{{ request()->routeIs('account.orders.index') ? 'active' : '' }}">
                             <a href="{{ route('account.orders.index') }}">
                                 <i class="fa fa-cart-arrow-down" aria-hidden="true"></i>
                                 {{ trans('storefront::account.links.my_orders') }}
+                            </a>
+                        </li>
+
+                        <li class="{{ request()->routeIs('account.payments.index') ? 'active' : '' }}">
+                            <a href="{{ route('account.payments.index') }}">
+                                <i class="fa fa-money" aria-hidden="true"></i>
+                                {{ trans('storefront::account.links.my_payments') }}
                             </a>
                         </li>
 

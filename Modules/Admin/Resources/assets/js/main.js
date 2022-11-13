@@ -3,6 +3,7 @@ window.Sortable = require('sortablejs');
 window.$ = window.jQuery = require('jquery');
 
 require('bootstrap');
+require('bootstrap-datepicker');
 require('selectize');
 require('flatpickr');
 require('jquery-slimscroll');

@@ -2,6 +2,7 @@
 @import '~font-awesome/css/font-awesome';
 @import '~nprogress/nprogress';
 @import '~datatables.net-bs/css/dataTables.bootstrap';
+@import '~bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 @import '~flatpickr/dist/ie';
 @import './datatables';
 @import './selectize';
@@ -18,6 +19,11 @@
 
 html {
     direction: ltr;
+}
+
+.padding-form-vertical {
+    padding-right: 30px;
+    padding-left: 30px;
 }
 
 .btn-actions {

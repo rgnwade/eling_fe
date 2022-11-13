@@ -36,6 +36,8 @@ class Role extends EloquentRole
         return static::select('id')->get()->pluck('name', 'id');
     }
 
+    const SELLER_ROLE = 4;
+
     /**
      * The Users relationship.
      *

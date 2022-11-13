@@ -12,6 +12,8 @@ return [
         'admin.user.js' => ['module' => 'user:admin/js/user.js'],
         'admin.login.css' => ['module' => 'user:admin/css/login.css'],
         'admin.login.js' => ['module' => 'user:admin/js/login.js'],
+        'vendor.login.css' => ['module' => 'user:admin/css/login.css'],
+        'vendor.login.js' => ['module' => 'user:admin/js/login.js']
     ],
 
     /*

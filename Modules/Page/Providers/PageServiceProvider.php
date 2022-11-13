@@ -21,7 +21,7 @@ class PageServiceProvider extends ServiceProvider
     public function boot()
     {
         TabManager::register('pages', PageTabs::class);
-        $this->addAdminAssets('admin.pages.(create|edit)',[ 'admin.media.css', 'admin.media.js']);
+        $this->addAdminPanelAssets('admin.pages.(create|edit)',[ 'admin.media.css', 'admin.media.js']);
     }
 
     /**

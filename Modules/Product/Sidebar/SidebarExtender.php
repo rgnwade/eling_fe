@@ -33,7 +33,26 @@ class SidebarExtender extends BaseSidebarExtender
                         $this->auth->hasAccess('admin.products.index')
                     );
                 });
+
+                 $item->item(trans('product::sidebar.product_request'), function (Item $item) {
+                    $item->weight(5);
+                    $item->route('admin.products.index_vendor');
+                    $item->authorize(
+                        $this->auth->hasAccess('admin.products.index_vendor')
+                    );
+                });
+            });
+
+            $group->item(trans('product::products.product'), function (Item $item) {
+                $item->icon('fa fa-cube');
+                $item->weight(10);
+                $item->route('vendor.products.index');
+                $item->authorize(
+                    $this->auth->hasAccess('vendor.products.index')
+                );
             });
         });
+
+
     }
 }

@@ -4,10 +4,13 @@ namespace Modules\Product\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Modules\Product\Entities\Product;
+use Modules\Category\Entities\Category;
 use Modules\Product\Events\ProductViewed;
 use Modules\Product\Filters\ProductFilter;
 use Modules\Product\Events\ShowingProductList;
 use Modules\Product\Http\Middleware\SetProductSortOption;
+use Illuminate\Support\Facades\Auth;
+use Modules\Support\Chat;
 
 class ProductController extends Controller
 {
@@ -32,6 +35,12 @@ class ProductController extends Controller
     {
         $productIds = [];
 
+        if(request('category')){
+             $category = Category::findBySlug(request('category'))->name;
+        }else{
+            $category = '';
+        }
+        
         if (request()->has('query')) {
             $model = $model->search(request('query'));
             $productIds = $model->keys();
@@ -52,7 +61,7 @@ class ProductController extends Controller
 
         event(new ShowingProductList($products));
 
-        return view('public.products.index', compact('products', 'productIds'));
+        return view('public.products.index', compact('products', 'productIds','category'));
     }
 
     /**
@@ -67,14 +76,27 @@ class ProductController extends Controller
         $relatedProducts = $product->relatedProducts()->forCard()->get();
         $upSellProducts = $product->upSellProducts()->forCard()->get();
         $reviews = $this->getReviews($product);
+        $user = Auth::user();
+        $chat = array();
+        if ($user != null) {
+            $chat = Chat::properties($user, $product->company);
+        }
 
         if (setting('reviews_enabled')) {
             $product->load('reviews:product_id,rating');
         }
 
+        $context = [
+            'productName' => $product->name,
+            'productId' => (string) $product->id,
+            'imageLink' => $product->baseImage->path,
+            'price' => product_price($product),
+            'productLink' => route('products.show', ['slug' => $product->slug])
+        ];
+
         event(new ProductViewed($product));
 
-        return view('public.products.show', compact('product', 'relatedProducts', 'upSellProducts', 'reviews'));
+        return view('public.products.show', compact('product', 'relatedProducts', 'upSellProducts', 'reviews', 'chat', 'context'));
     }
 
     /**
@@ -85,7 +107,7 @@ class ProductController extends Controller
      */
     private function getReviews($product)
     {
-        if (! setting('reviews_enabled')) {
+        if (!setting('reviews_enabled')) {
             return collect();
         }
 

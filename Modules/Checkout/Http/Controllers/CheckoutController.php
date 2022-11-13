@@ -11,8 +11,9 @@ use Modules\Payment\Facades\Gateway;
 use Modules\Checkout\Events\OrderPlaced;
 use Modules\User\Services\CustomerService;
 use Modules\Checkout\Services\OrderService;
+use Modules\Order\Entities\Order;
 use Modules\Order\Http\Requests\StoreOrderRequest;
-
+use Illuminate\Support\Facades\DB;
 class CheckoutController extends Controller
 {
     /**
@@ -32,13 +33,20 @@ class CheckoutController extends Controller
      */
     public function create()
     {
+        if(!auth()->user()->completedRegisterCustomer()){
+            return redirect()->route('account.dashboard.index');
+        }
+
         $cart = Cart::instance();
         $countries = Country::supported();
         $gateways = Gateway::all();
         $termsPageURL = Page::urlForPage(setting('storefront_terms_page'));
+        $last_order = auth()->user()->orders()->orderby('id', 'desc')->first();
 
-        return view('public.checkout.create', compact('cart', 'countries', 'gateways', 'termsPageURL'));
+        return view('public.checkout.create', compact('cart', 'countries', 'gateways', 'termsPageURL', 'last_order'));
     }
+
+    
 
     /**
      * Store a newly created resource in storage.
@@ -53,8 +61,15 @@ class CheckoutController extends Controller
         if (auth()->guest() && $request->create_an_account) {
             $customerService->register($request)->login();
         }
-
-        $order = $orderService->create($request);
+        
+        DB::beginTransaction();
+        try {
+            $order = $orderService->create($request);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withInput()->withError($e->getMessage());
+        }
 
         $gateway = Gateway::get($request->payment_method);
 

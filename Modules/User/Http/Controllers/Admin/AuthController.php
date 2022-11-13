@@ -5,7 +5,10 @@ namespace Modules\User\Http\Controllers\Admin;
 use Modules\User\Http\Controllers\BaseAuthController;
 use Modules\Core\Http\Traits\LogTrait;
 use Modules\User\Http\Requests\LoginRequest;
+use Cartalyst\Sentinel\Checkpoints\NotActivatedException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 class AuthController extends BaseAuthController
 {
     use LogTrait;
@@ -22,6 +25,7 @@ class AuthController extends BaseAuthController
     public function getLogout(Request $request)
     {
         $this->createDefaultLog('User', '', 'logout', $request);
+        $request->user()->forceFill(['api_token' => null])->save();
         $this->auth->logout();
 
         return redirect($this->loginUrl());
@@ -39,6 +43,17 @@ class AuthController extends BaseAuthController
                 return back()->withInput()
                     ->withError(trans('user::messages.users.invalid_credentials'));
             }
+
+            if(!($this->auth->user()->hasRoleName('admin') || $this->auth->user()->hasRoleName('admin content'))){
+                $this->auth->logout();
+                return back()->withInput()
+                ->withError(trans('user::messages.users.invalid_credentials'));
+            }
+
+            $token =  Str::random(80);
+            $loggedIn->forceFill([
+                'api_token' => hash('sha256', $token),
+            ])->save();
 
             $this->createDefaultLog('User', '', 'login', $request);
 

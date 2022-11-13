@@ -17,7 +17,10 @@ class OrderServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->addAdminAssets('admin.orders.show', ['admin.order.css', 'admin.order.js']);
+        $this->addAdminPanelAssets('admin.orders.show', ['admin.order.css', 'admin.order.js']);
+
+        $this->addAdminPanelAssets('vendor.orders.show', ['admin.order.css', 'admin.order.js']);
+        $this->addAdminPanelAssets('admin.orders_vendor.show', ['admin.order.css', 'admin.order.js', 'admin.media.css', 'admin.media.js']);
     }
 
     /**

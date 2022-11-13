@@ -3,6 +3,7 @@
 return [
     'user' => 'User',
     'users' => 'Users',
+    'verification' => 'Verification',
     'profile' => 'Profile',
     'google2fa' => 'Google Two Factor',
     'google2fa_text' => 'Anda dapat menggunakan two factor authentication dengan melakukan scan pada barcode dibawah. Alternatif lainnya, anda dapat menggunakan code berikut:',
@@ -15,6 +16,10 @@ return [
         'last_name' => 'Last Name',
         'email' => 'Email',
         'last_login' => 'Last Login',
+        'roles' => 'roles',
+        'chat_admin' => 'Chat Admin',
+        'register_type' => 'Register Type',
+        'status' => 'Status',
     ],
     'tabs' => [
         'group' => [
@@ -27,6 +32,7 @@ return [
     ],
     'form' => [
         'activated' => 'Activated',
+        'select_company' => 'Select Company',
     ],
     'or_reset_password' => 'or, Reset Password',
     'send_reset_password_email' => 'Send Reset Password Email',

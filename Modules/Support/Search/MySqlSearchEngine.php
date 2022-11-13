@@ -42,9 +42,14 @@ class MySqlSearchEngine extends Engine
         $query = DB::table($builder->model->searchTable());
 
         $columns = implode(',', $builder->model->searchColumns());
+        
 
-        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $this->getSearchKeyword($builder));
-
+        if ($this->isLessCondition($builder->query) && strlen($builder->query) > 0) {
+            $query->whereRaw(" {$columns} like ?",  $this->getSearchKeywordForLess($builder) . '%');
+        } else {
+            $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $this->getSearchKeyword($builder));
+        }
+       
         if ($builder->callback) {
             $query = call_user_func($builder->callback, $query, $this);
         }
@@ -82,7 +87,21 @@ class MySqlSearchEngine extends Engine
             return '';
         }
 
+        if (preg_match('/[-+~*()><@"]/', $builder->query)) {
+            return  preg_replace('/[-+~*()><@"]/', ' ', $builder->query) . '*';
+        }
+
         return '+' . preg_replace('/[-+~*()><@"]/', ' ', $builder->query) . '*';
+    }
+
+    private function getSearchKeywordForLess($builder)
+    {
+        return preg_replace('/[+~*()><@"]/', ' ', $builder->query);
+    }
+
+    private function isLessCondition($builder)
+    {
+        return strlen(explode(' ',trim($builder))[0]) < 3 ;
     }
 
     /**

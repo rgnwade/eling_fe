@@ -21,5 +21,16 @@ class SidebarExtender extends BaseSidebarExtender
                 );
             });
         });
+
+        $menu->group(trans('admin::sidebar.content'), function (Group $group) {
+            $group->item(trans('media::vendor.media'), function (Item $item) {
+                $item->weight(30);
+                $item->icon('fa fa-camera');
+                $item->route('vendor.media.index');
+                $item->authorize(
+                    $this->auth->hasAccess('vendor.media.index')
+                );
+            });
+        });
     }
 }

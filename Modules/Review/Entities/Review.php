@@ -3,6 +3,7 @@
 namespace Modules\Review\Entities;
 
 use Illuminate\Http\Request;
+use Modules\Order\Entities\Order;
 use Modules\User\Entities\User;
 use Modules\Support\Eloquent\Model;
 use Modules\Product\Entities\Product;
@@ -48,6 +49,12 @@ class Review extends Model
     public function reviewer()
     {
         return $this->belongsTo(User::class, 'reviewer_id');
+    }
+
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     /**

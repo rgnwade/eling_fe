@@ -12,6 +12,7 @@ return [
     'add_to_cart' => 'Add to cart',
     'add_to_wishlist' => '+ Add to Wishlist',
     'add_to_compare' => '+ Add to Compare',
+    'chat_with_seller' => 'Chat with seller',
     'options' => [
         'choose_an_option' => 'Choose an option',
     ],

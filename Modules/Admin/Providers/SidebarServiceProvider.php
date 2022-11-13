@@ -21,7 +21,7 @@ class SidebarServiceProvider extends ServiceProvider
             return;
         }
 
-        if ($this->app['inBackend']) {
+        if ($this->app['inAdminPanel']) {
             $manager->register(AdminSidebar::class);
         }
 

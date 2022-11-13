@@ -111,3 +111,21 @@ Route::get('logadmin', [
     'uses' => 'LogController@index',
     'middleware' => 'can:admin.log.index',
 ]);
+
+Route::get('verify', [
+    'as' => 'admin.verify.index',
+    'uses' => 'VerifyController@index',
+    'middleware' => 'can:admin.verify.index',
+]);
+
+Route::get('verify/{id}/edit', [
+    'as' => 'admin.verify.edit',
+    'uses' => 'VerifyController@edit',
+    'middleware' => 'can:admin.verify.edit',
+]);
+
+Route::put('verify/{id}', [
+    'as' => 'admin.verify.update',
+    'uses' => 'VerifyController@update',
+    'middleware' => 'can:admin.verify.edit',
+]);

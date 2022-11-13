@@ -17,6 +17,7 @@ trait InputFields
 
     protected function textareaField($name, $value, $class, $attributes)
     {
+        $attributes =  str_replace("required='1'","",$attributes);   //bug fix sementara
         return "<textarea name='{$name}' class='form-control {$class}' id='{$name}' {$attributes}>{$value}</textarea>";
     }
 
@@ -52,12 +53,14 @@ trait InputFields
         return $html;
     }
 
-    protected function selectField($name, $value, $class, $attributes, $options, $list)
+    protected function selectField($name, $value, $class, $attributes, $options, $list, $textIfNotselected = '')
     {
         $multiple = array_get($options, 'multiple', false);
 
         $html = "<select name='{$name}' class='form-control custom-select-black {$class}' {$attributes} id='{$name}'>";
-
+        if($textIfNotselected){
+            $html .= "<option value=''> $textIfNotselected </option>";
+        }
         foreach ($list as $listValue => $listName) {
             $listValue = e($listValue);
             $listName = e($listName);
@@ -77,6 +80,7 @@ trait InputFields
 
         return $html;
     }
+
 
     protected function field($name, $title, $errors, $entity, $options = [], callable $fieldCallback, ...$args)
     {
@@ -121,6 +125,54 @@ trait InputFields
         return new HtmlString($html);
     }
 
+
+
+    protected function fieldVertical($name, $title, $errors, $entity, $options = [], callable $fieldCallback, ...$args)
+    {
+        $value = $this->getValue($entity, $name);
+        $format_intruction = array_pull($options, 'format_intruction', false);
+
+        if (is_string($value)) {
+            $value = e($value);
+        }
+
+        if(!empty($format_intruction)){
+             $value = $format_intruction;
+        }
+
+        $normalizedName = $this->normalizeTranslatableFieldName($name);
+        $name = array_get($options, 'multiple', false) ? "{$name}[]" : $name;
+        $required = array_keys($options, 'required', false);
+        $help = array_pull($options, 'help', false);
+
+        $params = array_merge([
+            $name,
+            $value,
+            array_pull($options, 'class'),
+            $this->generateHtmlAttributes($options),
+            $options,
+        ], $args);
+
+        $labelCol = array_pull($options, 'labelCol', 3);
+        $fieldCol = 12 - $labelCol;
+
+        $html = '<div class="form-group ' . ($errors->has($normalizedName) ? 'has-error' : '') . '">';
+
+        $html .= $this->labelVertical($name, $title, $required);
+
+        $html .= call_user_func_array($fieldCallback, $params);
+
+        if ($help && ! $errors->has($normalizedName)) {
+            $html .= "<span class='help-block'>{$help}</span>";
+        }
+
+        $html .= $errors->first($normalizedName, '<span class="help-block">:message</span>');
+
+        $html .= '</div>';
+
+        return new HtmlString($html);
+    }
+
     private function normalizeTranslatableFieldName($name)
     {
         if (starts_with($name, 'translatable[')) {
@@ -140,6 +192,18 @@ trait InputFields
 
         return $html .= '</label>';
     }
+
+    protected function labelVertical($name, $title, $required = false)
+    {
+        $html = "<label for='{$name}'  control-label text-left'>{$title}";
+
+        if ($required) {
+            $html .= '<span class="m-l-5 text-red">*</span>';
+        }
+
+        return $html .= '</label>';
+    }
+
 
     private function getValue($entity, $name)
     {

@@ -29,6 +29,10 @@ class File extends Model
     {
         parent::boot();
 
+        static::saving(function ($file) {
+            $file->company_id = auth()->user()->company_id ?: 0;
+        });
+
         static::deleted(function ($file) {
             Storage::disk($file->disk)->delete($file->path);
             $original_filename = substr($file->path, strpos($file->path, "/") + 1);
@@ -101,6 +105,17 @@ class File extends Model
             ->when(! is_null($request->type) && $request->type !== 'null', function ($query) use ($request) {
                 $query->where('mime', 'LIKE', "{$request->type}/%");
             });
+
+        return new MediaTable($query);
+    }
+
+    public function vendorTable($request, $company_id)
+    {
+        $query = $this->newQuery()
+            ->when(! is_null($request->type) && $request->type !== 'null', function ($query) use ($request) {
+                $query->where('mime', 'LIKE', "{$request->type}/%");
+            })
+            ->where('company_id', $company_id);
 
         return new MediaTable($query);
     }

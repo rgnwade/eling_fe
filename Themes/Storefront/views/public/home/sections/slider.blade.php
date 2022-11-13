@@ -4,6 +4,9 @@
     data-arrows="{{ $slider->arrows }}"
 >
     @foreach ($slider->slides as $slide)
+    @if(is_null($slide->call_to_action_text))
+    <a href="{{ $slide->call_to_action_url }}"  target="_blank" style="color: inherit;">
+    @endif
         <div class="slide">
             <div class="slider-image" style="background-image: url({{ $slide->file->path }});"></div>
 
@@ -57,6 +60,9 @@
                 </div>
             </div>
         </div>
+    @if(is_null($slide->call_to_action_text))
+    </a>
+    @endif
     @endforeach
 </div>
 

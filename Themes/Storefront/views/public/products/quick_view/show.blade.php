@@ -98,11 +98,7 @@
                 <div class="availability pull-left">
                     <label>{{ trans('storefront::product.availability') }}:</label>
 
-                    @if ($product->in_stock)
-                        <span class="in-stock">{{ trans('storefront::product.in_stock') }}</span>
-                    @else
-                        <span class="out-of-stock">{{ trans('storefront::product.out_of_stock') }}</span>
-                    @endif
+                    {{$product->stockProductStatus->name}}
                 </div>
 
                 <div class="clearfix"></div>
@@ -130,7 +126,7 @@
                         <label class="pull-left" for="qty">{{ trans('storefront::product.qty') }}</label>
 
                         <div class="input-group-quantity pull-left clearfix">
-                            <input type="text" name="qty" value="1" class="input-number input-quantity pull-left" id="qty" min="1" max="{{ $product->manage_stock ? $product->qty : '' }}">
+                            <input type="text" name="qty" value="{{$product->minimum_order}}" class="input-number input-quantity pull-left" id="qty" min="{{$product->minimum_order}}" max="{{ $product->manage_stock ? $product->qty : '' }}">
 
                             <span class="pull-left btn-wrapper">
                                 <button type="button" class="btn btn-number btn-plus" data-type="plus"> + </button>

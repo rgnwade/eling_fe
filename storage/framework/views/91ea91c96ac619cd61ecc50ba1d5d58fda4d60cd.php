@@ -28,16 +28,20 @@
         <?php echo $__env->make('public.home.sections.features', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <?php endif; ?>
 
-    <?php if(setting('storefront_banner_section_1_enabled')): ?>
-        <?php echo $__env->make('public.home.sections.banner_section_1', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-    <?php endif; ?>
-
     <?php if(setting('storefront_product_carousel_section_enabled')): ?>
         <?php echo $__env->make('public.home.sections.product_carousel', [
             'title' => setting('storefront_product_carousel_section_title'),
             'products' => $carouselProducts
         ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <?php endif; ?>
+
+    <?php if(setting('storefront_banner_section_1_enabled')): ?>
+        <?php echo $__env->make('public.home.sections.banner_section_1', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <?php endif; ?>
+
+   
+    <?php echo $__env->make('public.home.sections.category', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+ 
 
     <?php if(setting('storefront_recent_products_section_enabled')): ?>
         <?php echo $__env->make('public.home.sections.recent_products', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -47,8 +51,19 @@
         <?php echo $__env->make('public.home.sections.banner_section_2', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <?php endif; ?>
 
+    <?php if(setting('storefront_banner_section_3_enabled')): ?>
+        <?php echo $__env->make('public.home.sections.banner_section_3', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <?php endif; ?>
+
     <?php if(setting('storefront_three_column_vertical_product_carousel_section_enabled')): ?>
         <?php echo $__env->make('public.home.sections.three_column_vertical_product_carousel', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <?php endif; ?>
+
+
+
+
+    <?php if(setting('storefront_product_tabs_section_enabled')): ?>
+        <?php echo $__env->make('public.home.sections.product_tabs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <?php endif; ?>
 
     <?php if(setting('storefront_landscape_products_section_enabled')): ?>
@@ -56,14 +71,6 @@
             'title' => setting('storefront_landscape_products_section_title'),
             'products' => $landscapeProducts
         ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-    <?php endif; ?>
-
-    <?php if(setting('storefront_banner_section_3_enabled')): ?>
-        <?php echo $__env->make('public.home.sections.banner_section_3', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-    <?php endif; ?>
-
-    <?php if(setting('storefront_product_tabs_section_enabled')): ?>
-        <?php echo $__env->make('public.home.sections.product_tabs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <?php endif; ?>
 
     <?php if(setting('storefront_two_column_product_carousel_section_enabled')): ?>

@@ -11,10 +11,13 @@ return [
     'is_active' => 'Status',
     'minimum_spend' => 'Minimum Spend',
     'maximum_spend' => 'Maximum Spend',
+    'maximum_discount' => 'Maximum Discount',
     'products' => 'Products',
     'exclude_products' => 'Exclude Products',
     'categories' => 'Categories',
     'exclude_categories' => 'Exclude Categories',
     'usage_limit_per_coupon' => 'Usage Limit Per Coupon',
     'usage_limit_per_customer' => 'Usage Limit Per Customer',
+    'usage_only_for_new_customer' => 'Usage Only For New Customer',
+ 
 ];

@@ -4,6 +4,7 @@ namespace Modules\User\Admin;
 
 use Modules\Admin\Ui\Tab;
 use Modules\Admin\Ui\Tabs;
+use Modules\Company\Entities\Company;
 use Modules\User\Entities\Role;
 use Modules\User\Repositories\Permission;
 
@@ -30,10 +31,12 @@ class UserTabs extends Tabs
                 'email',
                 'activated',
                 'roles',
+                'chat_admin'
             ]);
 
             $tab->view('user::admin.users.tabs.account', [
                 'roles' => Role::list(),
+                'companies' => Company::list(),
             ]);
         });
     }

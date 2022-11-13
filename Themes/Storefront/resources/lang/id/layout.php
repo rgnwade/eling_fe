@@ -3,6 +3,8 @@
 return [
     'compare' => 'Compare',
     'log_in' => 'Log In',
+    'register' => 'Register',
+    'log_out' => 'Logout',
     'search_for_products' => 'Search for products...',
     'all_categories' => 'All Categories',
     'search' => 'Search',

@@ -32,6 +32,10 @@ class NewOrder extends Mailable implements ShouldQueue
      */
     public function build()
     {
+        app()->setLocale($this->order->locale);
+
+        $this->order->load('products');
+
         return $this->subject(trans('checkout::mail.new_order_subject'))
             ->view("emails.{$this->getViewName()}", [
                 'logo' => File::findOrNew(setting('storefront_mail_logo'))->path,

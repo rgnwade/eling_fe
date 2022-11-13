@@ -29,7 +29,7 @@ class StorefrontServiceProvider extends ServiceProvider
         View::composer('public.home.index', HomePageComposer::class);
         View::composer('public.products.partials.filter', ProductsFilterComposer::class);
 
-        $this->addAdminAssets('admin.storefront.settings.edit', [
+        $this->addAdminPanelAssets('admin.storefront.settings.edit', [
             'admin.storefront.css', 'admin.media.css', 'admin.storefront.js', 'admin.media.js',
         ]);
     }

@@ -56,8 +56,8 @@ class UserController extends Controller
 
         Activation::complete($user, Activation::create($user)->code);
 
-        return redirect()->route('admin.users.index')
-            ->withSuccess(trans('admin::messages.resource_saved', ['resource' => trans('user::users.user')]));
+        return redirect()->back()
+        ->withSuccess(trans('admin::messages.resource_saved', ['resource' => trans('user::users.user')]));
     }
 
     /**
@@ -86,10 +86,11 @@ class UserController extends Controller
         }
 
         if (Activation::completed($user) && $request->activated === '0') {
-            return Activation::remove($user);
+            Activation::remove($user);
         }
 
-        return redirect()->route('admin.users.index')
+        // return redirect()->route('admin.users.index')
+        return redirect()->back()
             ->withSuccess(trans('admin::messages.resource_saved', ['resource' => trans('user::users.user')]));
     }
 }

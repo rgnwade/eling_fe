@@ -27,6 +27,6 @@ class Authenticate
 
         session()->put('url.intended', $url);
 
-        return redirect()->route('login');
+        return redirect()->route('login')->withError(trans('core::messages.please_login'));
     }
 }

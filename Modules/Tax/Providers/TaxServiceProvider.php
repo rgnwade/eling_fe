@@ -21,7 +21,7 @@ class TaxServiceProvider extends ServiceProvider
     {
         TabManager::register('tax_classes', TaxTabs::class);
 
-        $this->addAdminAssets('admin.taxes.(create|edit)', ['admin.tax.css', 'admin.tax.js']);
+        $this->addAdminPanelAssets('admin.taxes.(create|edit)', ['admin.tax.css', 'admin.tax.js']);
     }
 
     /**

@@ -75,7 +75,11 @@ class CartCoupon
 
     private function calculate()
     {
-        return $this->couponCondition->getCalculatedValue($this->productsTotalPrice());
+        $value  = $this->couponCondition->getCalculatedValue($this->productsTotalPrice());
+        if ($value < $this->coupon->maximum_discount) {
+            return $value;
+        }
+        return $this->coupon->maximum_discount;
     }
 
     private function productsTotalPrice()

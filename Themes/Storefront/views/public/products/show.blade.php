@@ -1,6 +1,6 @@
 @extends('public.layout')
 
-@section('title', $product->name)
+@section('title', $product->brand_name)
 
 @push('meta')
     <meta name="title" content="{{ $product->meta->meta_title }}">
@@ -20,7 +20,11 @@
     <div class="product-details-wrapper">
         <div class="row">
             @include('public.products.partials.product.images')
-            @include('public.products.partials.product.details')
+            @if($product->isVideotron())
+            @include('public.products.partials.product.details_videotron')
+            @else
+                @include('public.products.partials.product.details')
+            @endif
         </div>
 
         <div class="row">

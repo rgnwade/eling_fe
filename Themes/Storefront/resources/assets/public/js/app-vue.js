@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Vue from 'vue';
+import $ from 'jquery';
 window.Vue = Vue;
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -12,8 +13,11 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+const full_payment = 'full_payment';
+const advance_payment = 'advance_payment';
 
 var app = new Vue({
+
     el: '#app-checkout',
     data: {
         loading: false,
@@ -139,10 +143,19 @@ var app = new Vue({
             })
                 .then(function (response) {
                     app.loading = false;
-                    document.getElementById('total-amount').textContent = response.data.total;
-                    document.getElementById('shipping-total-amount').textContent = response.data.shipping_total.formatted;
-                    document.getElementById('coupon-value').innerHTML = `&#8211;${response.data.discount}`;
+                    $('#total-amount').text(response.data.total);
+                    $('#total-amount2').text(response.data.total);
+                    $('#shipping-total-amount').text(response.data.shipping_total.formatted);
+                    $('#coupon-value').html(`&#8211;${response.data.discount}`);
+                    app.updateDownPayment();
                 });
+        },
+        updateDownPayment: function () {
+            // eslint-disable-next-line quotes
+            let payment_term = $("input[name='payment_term']:checked").val();
+            if (payment_term === advance_payment) {
+                this.setadvancePayment();
+            }
         },
         getCourier: function () {
             this.loading = true;
@@ -155,6 +168,38 @@ var app = new Vue({
                     app.loading = false;
                     app.couriers = response.data;
                     app.courier = '';
+                });
+        },
+        setadvancePayment: function () {
+            this.loading = true;
+            this.payment_term = advance_payment;
+            $('#down_payment').show();
+            axios.post(this.url + '/payment-terms/advance', {
+                params: {
+                    //params
+                },
+            })
+                .then(function (response) {
+                    app.loading = false;
+                    $('#total-amount').html(response.data.total);
+                    $('#down_payment_amount').html(response.data.down_payment_amount);
+                    $('#down_payment_amount_info').html(response.data.down_payment_amount);
+                    $('#completion_payment_amount_info').html(response.data.completion_payment_amount);
+                });
+        },
+        setFullPayment: function () {
+            this.loading = true;
+            this.payment_term = full_payment;
+            $('#down_payment').hide();
+            $('#down_payment_Amount').hide();
+            axios.post(this.url + '/payment-terms/full-payment', {
+                params: {
+                    //params
+                },
+            })
+                .then(function (response) {
+                    app.loading = false;
+                    $('#total-amount').html(response.data.total);
                 });
         },
     },

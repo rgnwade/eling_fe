@@ -19,6 +19,8 @@
             <th>{{ trans('user::users.table.last_name') }}</th>
             <th>{{ trans('user::users.table.email') }}</th>
             <th>{{ trans('user::users.table.last_login') }}</th>
+            <th>{{ trans('user::users.table.roles') }}</th>
+            <th>{{ trans('user::users.table.chat_admin') }}</th>
             <th data-sort>{{ trans('admin::admin.table.created') }}</th>
         </tr>
     @endslot
@@ -33,6 +35,8 @@
                 { data: 'last_name', name: 'last_name' },
                 { data: 'email', name: 'email' },
                 { data: 'last_login', name: 'last_login', searchable: false },
+                { data: 'roles', name: 'roles', searchable: false },
+                { data: 'chat_admin', name: 'chat_admin', searchable: false },
                 { data: 'created', name: 'created_at' },
             ]
         });

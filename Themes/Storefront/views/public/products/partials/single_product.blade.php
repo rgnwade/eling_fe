@@ -5,12 +5,12 @@
         </div>
     @else
         <div class="image-holder">
-            <img src="{{ $product->base_image->path }}">
+            <img src="{{ $product->base_image->thumb }}">
         </div>
     @endif
 
     <div class="single-product-details">
-        <span class="product-name">{{ $product->name }}</span>
+        <span class="product-name">{{ $product->brand_name }}</span>
 
         <span class="product-price">
             {{ product_price($product) }}

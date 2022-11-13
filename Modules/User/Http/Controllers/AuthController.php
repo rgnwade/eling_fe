@@ -6,6 +6,8 @@ use Exception;
 use Modules\Page\Entities\Page;
 use Modules\User\Entities\User;
 use Laravel\Socialite\Facades\Socialite;
+use Modules\User\Mail\CouponCode;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends BaseAuthController
 {
@@ -47,7 +49,7 @@ class AuthController extends BaseAuthController
      */
     public function redirectToProvider($provider)
     {
-        if (! in_array($provider, app('enabled_social_login_providers'))) {
+        if (!in_array($provider, app('enabled_social_login_providers'))) {
             abort(404);
         }
 
@@ -62,7 +64,7 @@ class AuthController extends BaseAuthController
      */
     public function handleProviderCallback($provider)
     {
-        if (! in_array($provider, app('enabled_social_login_providers'))) {
+        if (!in_array($provider, app('enabled_social_login_providers'))) {
             abort(404);
         }
 
@@ -113,6 +115,14 @@ class AuthController extends BaseAuthController
         return view('public.auth.register', compact('privacyPageURL'));
     }
 
+    public function getRegisterSeller()
+    {
+        $privacyPageURL = Page::urlForPage(setting('storefront_privacy_page'));
+
+        return view('public.auth.register_seller', compact('privacyPageURL'));
+    }
+
+
     /**
      * Show reset password form.
      *
@@ -121,6 +131,26 @@ class AuthController extends BaseAuthController
     public function getReset()
     {
         return view('public.auth.reset.begin');
+    }
+
+    public function getActivate($uuid, $code)
+    {
+        $user =  User::where('uuid', $uuid)->first();
+        $userId = $user->id;
+
+        if ($userId && $this->auth->activate($userId, $code)) {
+
+            if (setting('storefront_coupon_email_enabled')) {
+                Mail::to($user->email)
+                    ->send(new CouponCode());
+            }
+
+            return redirect()->route('login')
+                ->withSuccess(trans('user::messages.users.account_activated'));
+        }
+
+        return redirect()->route('register')
+            ->withError(trans('user::messages.users.account_activated_error'));
     }
 
     /**

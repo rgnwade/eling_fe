@@ -1,7 +1,7 @@
 <nav class="navbar navbar-static-top clearfix">
     <ul class="nav navbar-nav clearfix">
         <li class="visit-store hidden-sm hidden-xs">
-            <a href="{{ route('home') }}" target="_blank">
+            <a href="{{ config('app.url') }}" target="_blank">
                 <i class="fa fa-desktop"></i>
                 {{ trans('admin::admin.visit_store') }}
             </a>

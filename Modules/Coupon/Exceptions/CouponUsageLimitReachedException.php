@@ -13,6 +13,13 @@ class CouponUsageLimitReachedException extends Exception
      */
     public function render()
     {
+        if (request()->wantsJson()) {
+            return [
+                "success" => false,
+                "errors" => trans('coupon::messages.usage_limit_reached'),
+            ];
+        }
+
         return redirect()->route('cart.index')->withInput()
             ->with('error', trans('coupon::messages.usage_limit_reached'));
     }

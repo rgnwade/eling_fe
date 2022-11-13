@@ -5,6 +5,7 @@ namespace Modules\Product\Providers;
 use Modules\Product\RecentlyViewed;
 use Modules\Support\Traits\AddsAsset;
 use Modules\Product\Admin\ProductTabs;
+use Modules\Product\Admin\ProductVendorTabs;
 use Illuminate\Support\ServiceProvider;
 use Modules\Support\Traits\LoadsConfig;
 use Modules\Admin\Ui\Facades\TabManager;
@@ -21,10 +22,20 @@ class ProductServiceProvider extends ServiceProvider
     public function boot()
     {
         TabManager::register('products', ProductTabs::class);
+        TabManager::register('products_vendor', ProductVendorTabs::class);
 
-        $this->addAdminAssets('admin.products.(create|edit)', [
+        $this->addAdminPanelAssets('admin.products.(create|edit)', [
             'admin.media.css', 'admin.media.js', 'admin.product.css', 'admin.product.js',
         ]);
+
+        $this->addAdminPanelAssets('vendor.products.(create|edit)', [
+            'vendor.media.css', 'vendor.media.js',
+        ]);
+
+        $this->addAdminPanelAssets('vendor.products.(create|edit)', [
+            'vendor.media.css', 'vendor.media.js',
+        ]);
+
     }
 
     /**

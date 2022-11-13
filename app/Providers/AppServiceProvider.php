@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use FloatingPoint\Stylist\StylistServiceProvider;
 use Nwidart\Modules\LaravelModulesServiceProvider;
 use Jackiedo\DotenvEditor\DotenvEditorServiceProvider;
-
+use Illuminate\Support\Facades\Blade;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -24,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
         if (Request::secure()) {
             URL::forceScheme('https');
         }
+
+        Blade::directive('rupiah', function ( $expression ) { return "Rp. <?php echo number_format($expression,0,',','.'); ?>"; });
     }
 
     /**

@@ -3,8 +3,10 @@
 namespace Modules\User\Http\Controllers;
 
 use Modules\User\Mail\Welcome;
+use Modules\User\Mail\WelcomeActivate;
 use Modules\User\Entities\Role;
 use Modules\User\Entities\User;
+use Modules\Company\Entities\Company;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
 use Modules\User\Mail\ResetPasswordEmail;
@@ -15,7 +17,12 @@ use Modules\User\Http\Requests\PasswordResetRequest;
 use Modules\User\Http\Requests\ResetCompleteRequest;
 use Cartalyst\Sentinel\Checkpoints\ThrottlingException;
 use Cartalyst\Sentinel\Checkpoints\NotActivatedException;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 abstract class BaseAuthController extends Controller
 {
@@ -78,10 +85,17 @@ abstract class BaseAuthController extends Controller
                 'password' => $request->password,
             ], (bool) $request->get('remember_me', false));
 
-            if (! $loggedIn) {
+            if (!$loggedIn) {
                 return back()->withInput()
                     ->withError(trans('user::messages.users.invalid_credentials'));
+            } else {
+                $token = Str::random(80);
+                $loggedIn->forceFill([
+                    'api_token' => hash('sha256', $token),
+                ])->save();
             }
+
+
 
             return redirect()->intended($this->redirectTo());
         } catch (NotActivatedException $e) {
@@ -100,6 +114,9 @@ abstract class BaseAuthController extends Controller
      */
     public function getLogout(Request $request)
     {
+        $request->user()->forceFill([
+            'api_token' => null,
+        ])->save();
         $this->auth->logout();
 
         return redirect($this->loginUrl());
@@ -113,19 +130,41 @@ abstract class BaseAuthController extends Controller
      */
     public function postRegister(RegisterRequest $request)
     {
-        $user = $this->auth->registerAndActivate($request->only([
-            'first_name',
-            'last_name',
-            'email',
-            'password',
-        ]));
+        DB::beginTransaction();
+        $user = null;
+        try {
+            $data = $request->only([
+                'first_name',
+                'last_name',
+                'email',
+                'password',
+                'position',
+                'register_type',
+                'company_name'
+            ]);
+
+            $data['status'] = User::UNCOMPLETED;
+            $user = $this->auth->register($data);
+            $activationCode = $this->auth->createActivation($user);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('register')
+            ->withError(trans('user::messages.users.account_created_error'));
+        }
+
+        if ($user) {
+            Mail::to($request->email)
+                ->send(new WelcomeActivate($user->first_name, $user->uuid, $activationCode));
+        }
+
 
         $this->assignCustomerRole($user);
 
-        if (setting('welcome_email')) {
-            Mail::to($request->email)
-                ->send(new Welcome($request->first_name));
-        }
+        // if (setting('welcome_email')) {
+        //     Mail::to($request->email)
+        //         ->send(new Welcome($request->first_name));
+        // }
 
         return redirect($this->loginUrl())
             ->withSuccess(trans('user::messages.users.account_created'));
@@ -224,7 +263,7 @@ abstract class BaseAuthController extends Controller
 
         $completed = $this->auth->completeResetPassword($user, $code, $request->new_password);
 
-        if (! $completed) {
+        if (!$completed) {
             return back()->withInput()
                 ->withError(trans('user::messages.users.invalid_reset_code'));
         }

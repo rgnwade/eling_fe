@@ -71,6 +71,27 @@ class MediaController extends Controller
         return response('Created', Response::HTTP_CREATED);
     }
 
+
+    public function storeFile(UploadMediaRequest $request)
+    {
+        $file = $request->file('file');
+
+        $path = Storage::putFile('media', $file);
+
+        File::create([
+            'user_id' => auth()->id(),
+            'disk' => config('filesystems.default'),
+            'filename' => $file->getClientOriginalName(),
+            'path' => $path,
+            'company_id' => auth()->user()->company_id,
+            'extension' => $file->guessClientExtension() ?? '',
+            'mime' => $file->getClientMimeType(),
+            'size' => $file->getClientSize(),
+        ]);
+
+        return response('Created', Response::HTTP_CREATED);
+    }
+
     /**
      * Remove the specified resources from storage.
      *

@@ -20,6 +20,7 @@
     }
 }
 
+
 .file-icon {
 	font-size: 20px;
 }
@@ -151,6 +152,77 @@
     }
 
     &:hover > .remove-image {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+.file-holder {
+	position: relative;
+	float: left;
+	overflow: hidden;
+	background: #fff;
+	margin: 0 10px 10px 0;
+	border: 1px solid #d2d6de;
+    border-radius: 3px;
+	cursor: move;
+    z-index: 0;
+
+    > i {
+        position: absolute;
+        font-size: 60px;
+        color: #d9d9d9;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        z-index: -1;
+    }
+
+    > img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        max-height: 100%;
+        max-width: 100%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+
+    > .remove-file {
+        position: absolute;
+        top: -2px;
+        right: 4px;
+        color: #ffffff;
+        padding: 0;
+        background: transparent;
+        transition: 200ms;
+        visibility: hidden;
+        opacity: 0;
+        font-size: 18px;
+        font-family: 'FontAwesome';
+        -webkit-text-stroke: 1px #737881;
+           -moz-text-stroke: 1px #737881;
+            -ms-text-stroke: 1px #737881;
+             -o-text-stroke: 1px #737881;
+        z-index: 2;
+
+        &:focus {
+            border-color: transparent;
+            -webkit-box-shadow: none;
+                    box-shadow: none;
+        }
+
+        &:active {
+            -webkit-box-shadow: none;
+                    box-shadow: none;
+        }
+
+        &::after {
+            content: "\f00d";
+        }
+    }
+
+    &:hover > .remove-file {
         visibility: visible;
         opacity: 1;
     }

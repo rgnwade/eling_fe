@@ -4,6 +4,7 @@
 @import '~slick-carousel/slick/slick.scss';
 @import '~slick-carousel/slick/slick-theme.scss';
 @import '~slick-lightbox/dist/slick-lightbox.css';
+@import '~bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 @import '~nouislider/distribute/nouislider';
 @import '~drift-zoom/dist/drift-basic';
 @import 'variables';
@@ -48,6 +49,7 @@
 @import 'utilities';
 @import 'button-loading';
 @import 'selectize';
+@import 'merchant';
 
 html {
     direction: ltr;
@@ -228,6 +230,27 @@ body {
 }
 
 .my-float-whatsapp{
+    margin-top:11px;
+}
+
+.float-chat-icon{
+	position:fixed;
+    padding-left: 10px;
+    padding-right:10px;
+	height:50px;
+	bottom:20px;
+	right:20px;
+	background-color:#0071b2;
+	color:#FFF;
+	border-radius:50px;
+	text-align:center;
+  font-size:30px;
+	box-shadow: 2px 2px 3px #999;
+  z-index:100;
+  margin-top:11px;
+}
+
+.my-float-chat-icon{
 	margin-top:11px;
 }
 

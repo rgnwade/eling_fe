@@ -21,7 +21,7 @@ class UpdateCurrencyRateRequest extends Request
     public function rules()
     {
         return [
-            'rate' => 'required|numeric|max:9999',
+            'rate' => 'required|numeric',
         ];
     }
 }

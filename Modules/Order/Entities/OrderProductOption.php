@@ -5,7 +5,7 @@ namespace Modules\Order\Entities;
 use Modules\Option\Entities\Option;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Option\Entities\OptionValue;
-
+use Modules\Support\Money;
 class OrderProductOption extends Model
 {
     /**
@@ -39,6 +39,15 @@ class OrderProductOption extends Model
         return $this->belongsToMany(OptionValue::class, 'order_product_option_values')
             ->using(OrderProductOptionValue::class)
             ->withPivot('price');
+    }
+
+    public function totalOptionsPrice()
+    {
+        $total = 0;
+        foreach ($this->values as $value) {
+            $total =  $total + $value->pivot->price->amount();
+        }
+        return Money::inDefaultCurrency($total);
     }
 
     public function getNameAttribute()

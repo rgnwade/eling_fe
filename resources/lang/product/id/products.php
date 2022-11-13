@@ -2,12 +2,16 @@
 
 return [
     'product' => 'Product',
+    'product_request' => 'Product Request',
+    'product_information' => 'Product Information',
     'products' => 'Products',
     'table' => [
         'thumbnail' => 'Thumbnail',
         'name' => 'Name',
         'lkpp_id' => 'Lkpp_id',
         'price' => 'Price',
+        'vendor_price' => 'Vendor Price',
+        'seller' => 'Seller',
         'preview' => 'Preview',
     ],
     'tabs' => [

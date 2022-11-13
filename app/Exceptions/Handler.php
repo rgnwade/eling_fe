@@ -70,7 +70,7 @@ class Handler extends ExceptionHandler
      */
     private function shouldRedirectToAdminDashboard(Exception $e)
     {
-        if (config('app.installed') || config('app.debug') || ! $this->container['inBackend']) {
+        if (config('app.installed') || config('app.debug') || ! $this->container['inAdminPanel']) {
             return false;
         }
 
@@ -85,7 +85,7 @@ class Handler extends ExceptionHandler
      */
     private function shouldShowNotFoundPage(Exception $e)
     {
-        if (config('app.installed') && $this->container['inBackend']) {
+        if (config('app.installed') && $this->container['inAdminPanel']) {
             return false;
         }
 

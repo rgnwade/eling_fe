@@ -1,0 +1,146 @@
+<?php
+
+namespace Modules\Company\Http\Controllers\Vendor;
+
+use Illuminate\Routing\Controller;
+use Modules\Company\Entities\Company;
+use Modules\Company\Entities\CompanyInfo;
+use Modules\Company\Entities\BankAccount;
+use Modules\Company\Entities\Country;
+use Modules\Admin\Traits\HasCrudActions;
+use Modules\Company\Http\Requests\SaveCompanyRequest;
+
+class CompanyController extends Controller
+{
+    use HasCrudActions;
+
+    /**
+     * Model for the resource.
+     *
+     * @var string
+     */
+    protected $model = Company::class;
+
+    /**
+     * Label of the resource.
+     *
+     * @var string
+     */
+    protected $label = 'company::company.company';
+
+    /**
+     * View path of the resource.
+     *
+     * @var string
+     */
+    protected $viewPath = 'company::vendor.companies';
+
+    /**
+     * Form requests for the resource.
+     *
+     * @var array|string
+     */
+    protected $validation = SaveCompanyRequest::class;
+
+    const COMPANY_INFOS = ['profile', 'instagram', 'twitter', 'facebook', 'website'];
+
+    public function edit($id)
+    {
+        $company = $this->getEntity($id);
+
+        if ($company->id != auth()->user()->company_id) {
+            return back()->withError('Error');
+        }
+
+        $companyInfo = array();
+        $documents = array();
+
+        foreach (SELF::COMPANY_INFOS as $info) {
+            $companyInfo[$info] = $company->getInfo($info)->value;
+        }
+
+        foreach (Company::LOCAL_MERCHANT_DOC as $doc) {
+            $documents[$doc] = $company->getInfo($doc)->value;
+        }
+
+        $data = array_merge([
+            $this->getResourceName() => $company,
+            'company_info' => $companyInfo,
+            'countries' => Country::list(),
+            'country_list' => Country::get(),
+            'documents' => $documents,
+            'docs' => Company::LOCAL_MERCHANT_DOC,
+        ], $this->getFormData('edit', $id));
+
+        return view("{$this->viewPath}.edit", $data);
+    }
+
+    public function update($id)
+    {
+        $entity = $this->getEntity($id);
+
+        if ($entity->id != auth()->user()->company_id) {
+            return back()->withError('Error');
+        }
+
+        $this->disableSearchSyncing();
+
+        $entity->update(
+            $this->getRequest('update')->all()
+        );
+
+        BankAccount::updateOrCreate(
+            ['company_id' => $entity->id],
+            $this->bankAccountParams($this->getRequest('update'))
+        );
+
+        $company_info = $this->companyInfoParams($this->getRequest('update'), SELF::COMPANY_INFOS);
+        if ($entity->isLocalMerchantType()) {
+            $documents =  $this->companyInfoParams($this->getRequest('update'), Company::LOCAL_MERCHANT_DOC);
+            $company_info = array_merge($company_info, $documents);
+        }
+        foreach ($company_info as $info) {
+            CompanyInfo::updateOrCreate(
+                ['company_id' => $entity->id, 'title' => $info->title],
+                ['company_id' => $entity->id, 'value' => $info->value]
+            );
+        }
+
+        $this->createLog($entity, 'edit', $this->getRequest('update'));
+
+        $this->searchable($entity);
+
+        if (method_exists($this, 'redirectTo')) {
+            return $this->redirectTo($entity)
+                ->withSuccess(trans('admin::messages.resource_saved', ['resource' => $this->getLabel()]));
+        }
+
+        return redirect()->back()
+            ->withSuccess(trans('admin::messages.resource_saved', ['resource' => $this->getLabel()]));
+    }
+
+
+    private function bankAccountParams($request)
+    {
+        return [
+            'beneficiary_bank' => $request->beneficiary_bank,
+            'beneficiary_name' => $request->beneficiary_name,
+            'beneficiary_account' => $request->beneficiary_account,
+            'swift_code' => $request->swift_code,
+            'bank_address' => $request->bank_address
+        ];
+    }
+
+    private function companyInfoParams($request, $informations)
+    {
+        $infos = [];
+        foreach ($informations as $info) {
+            $value = ($request->$info ?: '');
+            $infos[] = new CompanyInfo([
+                'title' => $info,
+                'value' => $value
+            ]);
+        }
+        return $infos;
+    }
+}

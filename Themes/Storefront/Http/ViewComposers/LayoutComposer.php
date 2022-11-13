@@ -27,6 +27,7 @@ class LayoutComposer
             'favicon' => $this->getFavicon(),
             'headerLogo' => $this->getHeaderLogo(),
             'shippingPayment' => $this->getshippingPayment(),
+            'certified' => $this->getCertifiedLogo(),
             'categories' => $this->getCategories(),
             'primaryMenu' => $this->getPrimaryMenu(),
             'categoryMenu' => $this->getCategoryMenu(),
@@ -60,6 +61,12 @@ class LayoutComposer
     {
         return $this->getLogo('storefront_shipping_payment');
     }
+
+    private function getCertifiedLogo()
+    {
+        return $this->getLogo('certified');
+    }
+
 
     private function getLogo($key)
     {

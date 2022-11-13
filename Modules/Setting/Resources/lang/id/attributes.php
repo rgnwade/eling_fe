@@ -22,6 +22,7 @@ return [
     'store_phone' => 'Store Phone',
     'whatsapp' => 'Whatsapp',
     'store_email' => 'Store Email',
+    'notif_receiving_emails' => 'Receiving Email Notif',
     'store_address_1' => 'Store Address 1',
     'store_address_2' => 'Store Address 2',
     'store_city' => 'Store City',

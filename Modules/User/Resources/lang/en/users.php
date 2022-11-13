@@ -4,11 +4,15 @@ return [
     'user' => 'User',
     'users' => 'Users',
     'profile' => 'Profile',
+    'verification' => 'Verification',
     'table' => [
         'first_name' => 'First Name',
         'last_name' => 'Last Name',
         'email' => 'Email',
         'last_login' => 'Last Login',
+        'chat_admin' => 'Chat Admin',
+        'register_type' => 'Register Type',
+        'status' => 'Status',
     ],
     'tabs' => [
         'group' => [

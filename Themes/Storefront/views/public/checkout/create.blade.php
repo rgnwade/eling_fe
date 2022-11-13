@@ -123,6 +123,12 @@
                                 <span id="total-amount">{{ $cart->total()->convertToCurrentCurrency()->format() }}</span>
                             </span>
 
+                            <span class="total" id="down_payment" @if (!$cart->hasPaymentTerm())  style="display: none;" @endif >
+                                {{ trans('storefront::cart.down_payment') }}
+                                <span id="down_payment_amount"> @if ($cart->hasPaymentTerm())  {{$cart->paymentTerm()->down_payment_amount->format()}} @endif</span>
+                            </span>
+
+
                             <div id="stripe-payment">
                                 <div id="card-element">
                                     {{-- A Stripe Element will be inserted here. --}}

@@ -24,6 +24,7 @@ class SaveUserRequest extends Request
         return [
             'first_name' => 'required',
             'last_name' => 'required',
+            'position' => 'required',
             'email' => ['required', 'email', $this->emailUniqueRule()],
             'password' => 'nullable|confirmed|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-~_]).{6,}$/',
             'roles' => ['required', Rule::exists('roles', 'id')],

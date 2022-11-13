@@ -17,7 +17,7 @@ class CategoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->addAdminAssets('admin.categories.index', ['admin.category.css', 'admin.jstree.js', 'admin.category.js']);
+        $this->addAdminPanelAssets('admin.categories.index', ['admin.category.css', 'admin.jstree.js', 'admin.category.js', 'admin.media.css', 'admin.media.js']);
     }
 
     /**

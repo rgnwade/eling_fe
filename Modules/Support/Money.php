@@ -24,6 +24,12 @@ class Money implements JsonSerializable
         return new self($amount, setting('default_currency'));
     }
 
+     public static function inVendorCurrency($amount, $currency)
+    {
+        return new self($amount,  $currency);
+    }
+
+
     private function newInstance($amount)
     {
         return new self($amount, $this->currency);
@@ -156,8 +162,10 @@ class Money implements JsonSerializable
 
     public function format($currency = null, $locale = null)
     {
-        $currency = $currency ?: currency();
+
+        $currency = $currency ?: $this->currency();
         $locale = $locale ?: locale();
+
 
         $numberFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
 

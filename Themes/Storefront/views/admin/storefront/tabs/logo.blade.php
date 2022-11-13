@@ -35,3 +35,12 @@
     'inputName' => 'translatable[storefront_shipping_payment]',
     'file' => $shippingPayment,
 ])
+
+<div class="media-picker-divider"></div>
+
+@include('media::admin.image_picker.single', [
+    'title' =>  'Certified',
+    'inputName' => 'translatable[certified]',
+    'file' => $certified,
+])
+

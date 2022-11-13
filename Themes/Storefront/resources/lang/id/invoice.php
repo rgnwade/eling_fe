@@ -4,6 +4,7 @@ return [
     'subject' => 'Invoice for order #:id',
     'invoice' => 'INVOICE',
     'order_id' => 'Order ID',
+    'payment_id' => 'Payment ID',
     'date' => 'Date',
     'order_details' => 'Order Details',
     'email' => 'Email',

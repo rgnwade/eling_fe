@@ -12,6 +12,8 @@ export default class {
         this.addSubCategory();
 
         $('#category-form').on('submit', this.submit);
+
+        window.admin.removeSubmitButtonOffsetOn('#image', '.category-details-tab li > a');
     }
 
     collapseAll(tree) {
@@ -77,7 +79,7 @@ export default class {
                 this.loading(false);
             },
             error: (xhr) => {
-                error(`${xhr.statusText}: ${xhr.responseJSON.message}`);
+                error(xhr.responseJSON.message);
 
                 this.loading(false);
             },
@@ -99,9 +101,27 @@ export default class {
         $('.category-details-tab .seo-tab').removeClass('hide');
 
         $('#is_searchable').prop('checked', category.is_searchable);
+        $('#is_storefront').prop('checked', category.is_storefront);
         $('#is_active').prop('checked', category.is_active);
 
+        $('.logo .image-holder-wrapper').html(this.categoryImage('logo', category.logo));
+        $('.banner .image-holder-wrapper').html(this.categoryImage('banner', category.banner));
+
         $('#category-form input[name="parent_id"]').remove();
+    }
+
+    categoryImage(fieldName, file) {
+        if (! file.exists) {
+            return this.imagePlaceholder();
+        }
+
+        return `
+            <div class="image-holder">
+                <img src="${file.path}">
+                <button type="button" class="btn remove-image" data-input-name="files[${fieldName}]"></button>
+                <input type="hidden" name="files[${fieldName}]" value="${file.id}">
+            </div>
+        `;
     }
 
     clear() {
@@ -112,7 +132,11 @@ export default class {
         $('.category-details-tab .seo-tab').addClass('hide');
 
         $('#is_searchable').prop('checked', false);
+        $('#is_storefront').prop('checked', false);
         $('#is_active').prop('checked', false);
+
+        $('.logo .image-holder-wrapper').html(this.imagePlaceholder());
+        $('.banner .image-holder-wrapper').html(this.imagePlaceholder());
 
         $('.btn-delete').addClass('hide');
         $('.form-group .help-block').remove();
@@ -120,6 +144,14 @@ export default class {
         $('#category-form input[name="parent_id"]').remove();
 
         $('.general-information-tab a').click();
+    }
+
+    imagePlaceholder() {
+        return `
+            <div class="image-holder placeholder">
+                <i class="fa fa-picture-o"></i>
+            </div>
+        `;
     }
 
     loading(state) {

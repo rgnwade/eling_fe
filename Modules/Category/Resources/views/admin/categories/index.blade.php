@@ -9,7 +9,7 @@
 @section('content')
     <div class="box box-default">
         <div class="box-body clearfix">
-            <div class="col-lg-2 col-md-3">
+            <div class="col-lg-3">
                 <div class="row">
                     <button class="btn btn-default add-root-category">{{ trans('category::categories.tree.add_root_category') }}</button>
                     <button class="btn btn-default add-sub-category disabled">{{ trans('category::categories.tree.add_sub_category') }}</button>
@@ -23,10 +23,11 @@
                 </div>
             </div>
 
-            <div class="col-lg-10 col-md-9">
+            <div class="col-lg-9">
                 <div class="tab-wrapper category-details-tab">
                     <ul class="nav nav-tabs">
                         <li class="general-information-tab active"><a data-toggle="tab" href="#general-information">{{ trans('category::categories.tabs.general') }}</a></li>
+                        <li class="image-tab"><a data-toggle="tab" href="#image">{{ trans('category::categories.tabs.image') }}</a></li>
                         <li class="seo-tab hide"><a data-toggle="tab" href="#seo">{{ trans('category::categories.tabs.seo') }}</a></li>
                     </ul>
 
@@ -39,10 +40,29 @@
                                     <div class="col-md-8">
                                         {{ Form::text('name', trans('category::attributes.name'), $errors, null, ['required' => true]) }}
                                         {{ Form::checkbox('is_searchable', trans('category::attributes.is_searchable'), trans('category::categories.form.show_this_category_in_search_box'), $errors) }}
+                                        {{ Form::checkbox('is_storefront','', trans('category::attributes.is_storefront'), $errors) }}
                                         {{ Form::checkbox('is_active', trans('category::attributes.is_active'), trans('category::categories.form.enable_the_category'), $errors) }}
                                     </div>
                                 </div>
                             </div>
+
+                            <div id="image" class="tab-pane fade">
+                                    <div class="logo">
+                                        @include('media::admin.image_picker.single', [
+                                            'title' => trans('category::categories.form.logo'),
+                                            'inputName' => 'files[logo]',
+                                            'file' => (object) ['exists' => false],
+                                        ])
+                                    </div>
+
+                                    <div class="banner">
+                                        @include('media::admin.image_picker.single', [
+                                            'title' => trans('category::categories.form.banner'),
+                                            'inputName' => 'files[banner]',
+                                            'file' => (object) ['exists' => false],
+                                        ])
+                                    </div>
+                                </div>
 
                             <div id="seo" class="tab-pane fade">
                                 <div class="row">

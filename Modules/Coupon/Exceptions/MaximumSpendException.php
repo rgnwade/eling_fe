@@ -30,6 +30,13 @@ class MaximumSpendException extends Exception
      */
     public function render()
     {
+        if (request()->wantsJson()) {
+            return [
+                "success" => false,
+                "errors" =>  trans('coupon::messages.maximum_spend', ['amount' => $this->money->format()]),
+            ];
+        }
+
         return redirect()->route('cart.index')->withInput()
             ->with('error', trans('coupon::messages.maximum_spend', ['amount' => $this->money->format()]));
     }

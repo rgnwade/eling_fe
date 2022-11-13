@@ -36,7 +36,8 @@ class CartItemController extends Controller
      */
     public function store(StoreCartItemRequest $request)
     {
-        Cart::store($request->product_id, $request->qty, $request->options ?? []);
+       
+        Cart::store($request->product_id, $request->qty, $request->options ?? [],  $request->details ?? []);
 
         return back()->withSuccess(trans('cart::messages.added'));
     }
@@ -74,5 +75,40 @@ class CartItemController extends Controller
         Cart::remove(decrypt($cartItemId));
 
         return back()->withSuccess(trans('cart::messages.removed'));
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param mixed $cartItemId
+     * @return \Illuminate\Http\Response
+     */
+    public function updateQty($cartItemId)
+    {
+        Cart::updateQuantity(decrypt($cartItemId), request('qty'));
+
+        try {
+            resolve(Pipeline::class)
+                ->send(Cart::coupon())
+                ->through($this->checkers)
+                ->thenReturn();
+        } catch (MinimumSpendException | MaximumSpendException $e) {
+            Cart::removeOldCoupon();
+        }
+
+        return json_encode(["success" => true]);
+    }
+
+    public function remove($cartItemId)
+    {
+        Cart::remove(decrypt($cartItemId));
+        return json_encode(["success" => true]);
+    }
+
+    public function index()
+    {
+        $items = Cart::show();
+        return json_encode($items);
     }
 }

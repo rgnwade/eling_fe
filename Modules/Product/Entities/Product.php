@@ -13,13 +13,28 @@ use Modules\Meta\Eloquent\HasMetaData;
 use Modules\Support\Search\Searchable;
 use Modules\Category\Entities\Category;
 use Modules\Product\Admin\ProductTable;
+use Modules\Product\Admin\ProductVendorTable;
+use Modules\Product\Admin\ProductRequestTable;
 use Modules\Support\Eloquent\Sluggable;
 use Modules\Support\Eloquent\Translatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Attribute\Entities\ProductAttribute;
+use Modules\Company\Entities\Company;
+use Modules\Currency\Entities\CurrencyRate;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
+
+    const status_reviewing = 1;
+    const DEFAULT_PRICE = 0;
+    const DEFAULT_MANAGE_STOCK = false;
+    const DEFAULT_IN_STOCK = true;
+    const DEFAULT_IS_ACTIVE = false;
+    const DEFAULT_VENDOR_PRODUCT_STATUS = 1;
+    const VIDEOTRON_CATEGORY = '5';
+    const M2 = 'M2';
+
     use Translatable,
         Searchable,
         Sluggable,
@@ -41,6 +56,11 @@ class Product extends Model
      */
     protected $fillable = [
         'tax_class_id',
+        'vendor_product_status_id',
+        'stock_product_status_id',
+        'price_formula',
+        'vendor_currency',
+        'company_id',
         'slug',
         'sku',
         'price',
@@ -48,15 +68,24 @@ class Product extends Model
         'special_price_start',
         'special_price_end',
         'manage_stock',
+        'manage_stock',
         'qty',
         'weight',
+        'length',
+        'height',
+        'width',
         'in_stock',
         'is_active',
         'is_lkpp',
         'lkpp_id',
         'new_from',
         'new_to',
+        'vendor_price',
+        'minimum_order',
+        'unit'
     ];
+
+    protected $appends = ['cabinet_length', 'cabinet_width', 'cabinet_depth', 'brand_name'];
 
     /**
      * The attributes that should be cast to native types.
@@ -89,7 +118,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $translatedAttributes = ['name', 'description','specification', 'short_description'];
+    protected $translatedAttributes = ['name', 'description', 'specification', 'short_description'];
 
     /**
      * The attribute that will be slugged.
@@ -112,12 +141,24 @@ class Product extends Model
         });
 
         static::saved(function ($product) {
-            if (! empty(request()->all())) {
+            if (!empty(request()->all())) {
                 $product->saveRelations(request()->all());
             }
+            DB::table('products')
+            ->where('id', $product->id)
+            ->update(['keyword' =>  $product->keyword()]);
         });
 
         static::addActiveGlobalScope();
+    }
+
+    public  function keyword()
+    {
+
+        if ($this->merkName()) {
+            return  $this->merkName() . " " . $this->name;
+        }
+        return  $this->name;
     }
 
     public static function newArrivals($limit)
@@ -151,6 +192,7 @@ class Product extends Model
                 'in_stock',
                 'new_from',
                 'new_to',
+                'minimum_order',
             ]);
     }
 
@@ -187,6 +229,7 @@ class Product extends Model
         return $this->belongsTo(TaxClass::class)->withDefault();
     }
 
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
@@ -199,16 +242,36 @@ class Product extends Model
 
     public function merk()
     {
-        return $this->hasOne(ProductAttribute::class)->where('attribute_id',1);
+        return $this->hasOne(ProductAttribute::class)->where('attribute_id', 1);
     }
+
+    public function videotronInfo()
+    {
+        return $this->hasOne(ProductVideotron::class);
+    }
+
+    public function isVideotron()
+    {
+        return !empty($this->videotronInfo);
+    }
+
+    public function multiple()
+    {
+        if (!$this->isVideotron()) {
+            return 1;
+        }
+        $m2  =  $this->videotronInfo->cabinet_length * $this->videotronInfo->cabinet_width;
+        return $m2;
+    }
+
+
 
     public function merkName()
     {
-        if(!empty($this->merk()) && !empty($this->merk->merkName)){
+        if (!empty($this->merk()) && !empty($this->merk->merkName)) {
             return $this->merk->merkName->value;
         }
         return '';
-
     }
 
 
@@ -253,14 +316,24 @@ class Product extends Model
         return $this->price->amount();
     }
 
+    public function getDiscount()
+    {
+        return $this->price->amount() - $this->getSellingPrice();
+    }
+
     public function getPriceAttribute($price)
     {
         return Money::inDefaultCurrency($price);
     }
 
+    public function getVendorPriceAttribute($vendorPrice)
+    {
+        return Money::inVendorCurrency($vendorPrice, $this->vendor_currency);
+    }
+
     public function getSpecialPriceAttribute($specialPrice)
     {
-        if (! is_null($specialPrice)) {
+        if (!is_null($specialPrice)) {
             return Money::inDefaultCurrency($specialPrice);
         }
     }
@@ -297,6 +370,13 @@ class Product extends Model
             ->sortBy('pivot.id');
     }
 
+    
+    public function getBrandNameAttribute()
+    {
+        
+        return $this->merkName().' '.$this->name;
+    }
+
     public function getAttributeSetsAttribute()
     {
         return $this->getAttribute('attributes')->groupBy('attributeSet');
@@ -309,7 +389,7 @@ class Product extends Model
 
     public function isOutOfStock()
     {
-        return ! $this->isInStock();
+        return !$this->isInStock();
     }
 
     public function outOfStock()
@@ -319,7 +399,7 @@ class Product extends Model
 
     public function hasStockFor($qty)
     {
-        if (! $this->manage_stock) {
+        if (!$this->manage_stock) {
             return true;
         }
 
@@ -373,12 +453,12 @@ class Product extends Model
 
     private function hasSpecialPriceStartDate()
     {
-        return ! is_null($this->special_price_start);
+        return !is_null($this->special_price_start);
     }
 
     private function hasSpecialPriceEndDate()
     {
-        return ! is_null($this->special_price_end);
+        return !is_null($this->special_price_end);
     }
 
     private function specialPriceStartDateIsValid()
@@ -393,7 +473,8 @@ class Product extends Model
 
     public function avgRating()
     {
-        return ceil($this->reviews->avg->rating * 2) / 2;
+        // return ceil($this->reviews->avg->rating * 2) / 2;
+        return round($this->rating);
     }
 
     public function totalReviewsForRating($rating)
@@ -433,12 +514,12 @@ class Product extends Model
 
     private function hasNewFromDate()
     {
-        return ! is_null($this->new_from);
+        return !is_null($this->new_from);
     }
 
     private function hasNewToDate()
     {
-        return ! is_null($this->new_to);
+        return !is_null($this->new_to);
     }
 
     private function newFromDateIsValid()
@@ -499,13 +580,74 @@ class Product extends Model
             ->withName()
             ->withBaseImage()
             ->withPrice()
-            ->addSelect(['id', 'lkpp_id', 'is_active', 'created_at'])
+            ->where('vendor_product_status_id', '!=', self::status_reviewing)
+            ->addSelect(['id', 'lkpp_id', 'is_active', 'created_at', 'vendor_currency'])
             ->when($request->has('except'), function ($query) use ($request) {
                 $query->whereNotIn('id', explode(',', $request->except));
             });
 
         return new ProductTable($query);
     }
+
+    public function tableRequestVendor($request)
+    {
+        $query = $this->newQuery()
+            ->withoutGlobalScope('active')
+            ->withName()
+            ->withBaseImage()
+            ->withPrice()
+            ->WithVendorProductStatus()
+            ->WithCompany()
+            ->where('company_id', '!=', company::eling)
+            ->addSelect(['id', 'vendor_product_status_id', 'company_id', 'vendor_price', 'is_active', 'created_at', 'updated_at', 'vendor_currency'])
+            ->when($request->has('except'), function ($query) use ($request) {
+                $query->whereNotIn('id', explode(',', $request->except));
+            });
+
+        return new ProductRequestTable($query);
+    }
+
+    public function tableVendor($request)
+    {
+        $query = $this->newQuery()
+            ->where('company_id', auth()->user()->company_id)
+            ->withoutGlobalScope('active')
+            ->withName()
+            ->WithVendorProductStatus()
+            ->addSelect(['id', 'vendor_product_status_id', 'vendor_price', 'is_active', 'created_at', 'vendor_currency'])
+            ->when($request->has('except'), function ($query) use ($request) {
+                $query->whereNotIn('id', explode(',', $request->except));
+            });
+
+        return new ProductVendorTable($query);
+    }
+
+    public function scopeWithVendorProductStatus($query)
+    {
+        $query->with('vendorProductStatus:id,name');
+    }
+    public function scopeWithCompany($query)
+    {
+        $query->with('company:id,name');
+    }
+
+    public function vendorProductStatus()
+    {
+        return $this->belongsTo(VendorProductStatus::class, 'vendor_product_status_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function stockProductStatus()
+    {
+        return $this->belongsTo(StockProductStatus::class);
+    }
+
+
+
 
     /**
      * Save associated relations for the product.
@@ -542,16 +684,56 @@ class Product extends Model
 
     public function searchTable()
     {
-        return 'product_translations';
+        return 'products';
     }
 
     public function searchKey()
     {
-        return 'product_id';
+        return 'id';
     }
 
     public function searchColumns()
     {
-        return ['name'];
+        return ['keyword'];
+    }
+
+    public function priceFormulas()
+    {
+        $vendor_price = $this->vendor_price->amount();
+        $rate = CurrencyRate::currentUSD();
+        $fomulas =  ProductPriceFormula::list($this->vendor_currency);
+        $fomulas = $fomulas->map(function ($name, $key) use ($vendor_price, $rate) {
+            $result = 0;
+            eval('$result = ' . $key . ';');
+            $result = round($result, -3);
+            $result = Money::inDefaultCurrency($result)->format();
+            return $result . " " . $name;
+        });
+
+        return $fomulas;
+    }
+
+    public function getCabinetLengthAttribute()
+    {
+        if ($this->isVideotron()) {
+            return $this->videotronInfo->cabinet_length;
+        }
+        return 0;
+    }
+
+    public function getCabinetWidthAttribute()
+    {
+        if ($this->isVideotron()) {
+            return $this->videotronInfo->cabinet_width;
+        }
+        return 0;
+    }
+
+    public function getCabinetDepthAttribute()
+    {
+        if ($this->isVideotron()) {
+            return $this->videotronInfo->cabinet_depth;
+        }
+        return 0;
     }
 }

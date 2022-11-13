@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::get('categories/tree', [
     'as' => 'admin.categories.tree',
     'uses' => 'CategoryTreeController@index',

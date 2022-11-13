@@ -88,3 +88,21 @@ if (! function_exists('review_form_has_error')) {
         return $errors->has('rating') || $errors->has('reviewer_name') || $errors->has('comment');
     }
 }
+
+
+if (! function_exists('review_form_has_error')) {
+    /**
+     * Determine if review form has any error.
+     *
+     * @param \Illuminate\Support\ViewErrorBag $errors
+     * @return bool
+     */
+    function review_form_has_error($errors)
+    {
+         return Money::inDefaultCurrency($this->getSubTotal());
+    }
+
+
+
+}
+

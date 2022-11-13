@@ -18,6 +18,9 @@ class SidebarExtender extends BaseSidebarExtender
                 $item->icon('fa fa-dashboard');
                 $item->route('admin.dashboard.index');
                 $item->isActiveWhen(route('admin.dashboard.index', null, false));
+                $item->authorize(
+                        $this->auth->hasAccess('admin.dashboard.index')
+                    );
             });
         });
 

@@ -24,4 +24,14 @@ class RouteServiceProvider extends ServiceProvider
     {
         return __DIR__ . '/../Routes/admin.php';
     }
+
+    protected function vendor()
+    {
+        return __DIR__ . '/../Routes/vendor.php';
+    }
+
+    protected function public()
+    {
+        return __DIR__ . '/../Routes/public.php';
+    }
 }

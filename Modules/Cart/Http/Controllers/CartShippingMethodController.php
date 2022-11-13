@@ -14,17 +14,17 @@ use Illuminate\Support\Facades\Redis;
 
 class CartShippingMethodController extends Controller
 {
-    protected $origin ; //penjaringan
-    protected $raja_ongkir_url ;
-    protected $raja_ongkir_key ;
+    protected $origin; //penjaringan
+    protected $raja_ongkir_url;
+    protected $raja_ongkir_key;
     protected $weight_item_kg;
 
 
-    function __construct() {
+    function __construct()
+    {
         $this->origin =  2127; //penjaringan
         $this->raja_ongkir_key = Config::get('app.RAJA_ONGKIR_KEY');
         $this->raja_ongkir_url = Config::get('app.RAJA_ONGKIR_URL');
-
     }
 
     /**
@@ -45,12 +45,12 @@ class CartShippingMethodController extends Controller
         ]);
     }
 
-     public function shippingCost(Request $request)
+    public function shippingCost(Request $request)
     {
 
-       $weight_item_kg = Cart::getWeightTotal();
+        $weight_item_kg =$this->getCourierTotalWeight();
         $destination = $request->session()->get('destination');
-        $key = $request->params['courier'].'-'.$this->origin.'-'.$destination.'-'.$weight_item_kg;
+        $key = $request->params['courier'] . '-' . $this->origin . '-' . $destination . '-' . $weight_item_kg;
         $cache_courier = json_decode(Redis::get($key));
         $shippingMethod = new Method($cache_courier->name, $cache_courier->label, $cache_courier->cost, $cache_courier->destination, $cache_courier->code);
         Cart::addShippingMethod($shippingMethod);
@@ -61,46 +61,59 @@ class CartShippingMethodController extends Controller
         ]);
     }
 
+    private function getCourierTotalWeight()
+    {
+        $dimension_to_weight_courier = intval( Cart::getDimensionTotal()  / 6000);
+        $weight_item_kg = Cart::getWeightTotal();
+        if($dimension_to_weight_courier > $weight_item_kg){
+            return $dimension_to_weight_courier;
+        }
+        return $weight_item_kg;
+    }
 
     public function shippingCouriers(Request $request)
     {
-        $weight_item_kg = Cart::getWeightTotal();
+       
         $destination = $request->params['district'];
         $request->session()->put('destination', $destination);
-
+        $weight_item_kg = $this->getCourierTotalWeight();
         $data = new RajaOngkir;
-        $params =  ['origin'           =>  $this->origin,
-                    'originType'       => 'subdistrict',
-                    'destination'      => $destination,
-                    'destinationType'  => 'subdistrict',
-                    'weight'           => $weight_item_kg * 1000, //kg to gram
-                    'courier'          => 'jne:jnt:sicepat:lion:star:tiki'];
+        $params =  [
+            'origin'           =>  $this->origin,
+            'originType'       => 'subdistrict',
+            'destination'      => $destination,
+            'destinationType'  => 'subdistrict',
+            'weight'           => $weight_item_kg * 1000, //kg to gram
+            'courier'          => 'jne:jnt:sicepat:tiki:sap:ncs'
+        ];
         $response = $data->getCost($params);
         $couriers = [];
         $destination_response = json_encode($response->destination_details);
-        foreach($response->results as $result){
-            foreach($result->costs as $cost){
+        foreach ($response->results as $result) {
+            foreach ($result->costs as $cost) {
                 $etd = '';
-                if(!empty($cost->cost[0]->etd)){
-                    $etd = ' ('.$cost->cost[0]->etd.' '.trans('report::admin.filters.groups.days').')';
+                if (!empty($cost->cost[0]->etd)) {
+                    $etd = ' (' . $cost->cost[0]->etd . ' ' . trans('report::admin.filters.groups.days') . ')';
                 }
 
-                $courier_code = $result->code.'-'.$cost->service;
+                $courier_code = $result->code . '-' . $cost->service;
                 $cost_value = $cost->cost[0]->value;
-                $couriers[] = ["value" => $courier_code,
-                                "text" => strtoupper($result->code).'-'.$cost->service.$etd.', '.Money::inDefaultCurrency($cost_value)->format()];
-                $key = $courier_code.'-'.$this->origin.'-'.$destination.'-'.$weight_item_kg;
-                $shippingMethod = ['name'  => $result->name,
-                                   'label' => $cost->service,
-                                    'cost' => $cost_value,
-                                    'code' => $result->code,
-                                    'destination' => $destination_response];
+                $couriers[] = [
+                    "value" => $courier_code,
+                    "text" => strtoupper($result->code) . '-' . $cost->service . $etd . ', ' . Money::inDefaultCurrency($cost_value)->format()
+                ];
+                $key = $courier_code . '-' . $this->origin . '-' . $destination . '-' . $weight_item_kg;
+                $shippingMethod = [
+                    'name'  => $result->name,
+                    'label' => $cost->service,
+                    'cost' => $cost_value,
+                    'code' => $result->code,
+                    'destination' => $destination_response
+                ];
                 Redis::set($key,  json_encode($shippingMethod));
                 $day = 24 * (60 * 60);
                 Redis::expire($key,  $day);
             }
-
-
         }
 
         return json_encode($couriers);

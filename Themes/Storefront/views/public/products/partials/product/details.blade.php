@@ -35,18 +35,37 @@
 
         <div class="availability pull-left">
             <label>{{ trans('storefront::product.availability') }}:</label>
+             <span >{{$product->stockProductStatus->name}}</span>
+        </div>
+      
+        <div class="clearfix"></div>
+        <div class=" pull-left">
+            <label>{{ trans('storefront::product.seller') }}:</label>
+            <span>
+                @if (Auth::user())
+                    <a href="{{ route('merchants.index', ['slug' => $product->company->slug]) }}">
+                        {{ $product->company->name }}
+                    </a>,
+                        {{$product->company->country->name}}
+                @else
+                    @if($product->company->id != 1)
+                        {{ trans('storefront::storefront.authorized_partner') }}
+                    @else
+                        {{ $product->company->name }}
+                    @endif
+                @endif
+            </span>
+        </div>
+       
 
-            @if ($product->in_stock)
-                <span class="in-stock">{{ trans('storefront::product.in_stock') }}</span>
-            @else
-                <span class="out-of-stock">{{ trans('storefront::product.out_of_stock') }}</span>
-            @endif
+        <div class="clearfix"></div>
+        <div class=" pull-left">
+            <label>{{ trans('storefront::product.minimum_order') }}:</label>
+             <span > {{$product->minimum_order}} </span>
         </div>
 
 
-
         <div class="clearfix"></div>
-
         @if (! is_null($product->short_description))
             <div class="product-brief">{{ $product->short_description }}</div>
         @endif
@@ -70,7 +89,7 @@
                 <label class="pull-left" for="qty">{{ trans('storefront::product.qty') }}</label>
 
                 <div class="input-group-quantity pull-left clearfix">
-                    <input type="text" name="qty" value="1" class="input-number input-quantity pull-left" id="qty" min="1" max="{{ $product->manage_stock ? $product->qty : '' }}">
+                    <input type="text" name="qty" value="{{$product->minimum_order}}" class="input-number input-quantity pull-left" id="qty" min="{{$product->minimum_order}}" max="{{ $product->manage_stock ? $product->qty : '' }}">
 
                     <span class="pull-left btn-wrapper">
                         <button type="button" class="btn btn-number btn-plus" data-type="plus"> + </button>
@@ -103,5 +122,21 @@
                 <button type="submit">{{ trans('storefront::product.add_to_compare') }}</button>
             </form>
         </div>
+        @auth
+            @if (!empty($chat) && $chat['user']['is_seller'] == false)
+                <div class="add-to clearfix">
+                    <button type="submit" id="chat-button" class="btn btn-primary pull-left" onclick="loadGroupChatWithContext(
+                        '{{$chat['client_group_id']}}',
+                        '{{$chat['group_name']}}',
+                        {{json_encode($chat['company'])}},
+                        {{json_encode($chat['user'])}},
+                        {{json_encode($chat['icon'])}},
+                        {{json_encode($context)}},
+                        )"
+                    data-loading>{{ trans('storefront::product.chat_with_seller') }} <i
+                    class="fa fa-comment "></i></button>
+                </div>
+            @endif
+        @endauth
     </div>
 </div>

@@ -24,6 +24,13 @@ return [
 
     'RAJA_ONGKIR_URL' => 'https://pro.rajaongkir.com/api/',
 
+    'applozic' => env('APPLOZIC_ID', 'false'),
+
+    'prefix_admin_url' => env('PREFIX_ADMIN_URL', 'admin'),
+
+    'prefix_vendor_url' => env('PREFIX_VENDOR_URL', 'vendor'),
+
+
     /*
    |--------------------------------------------------------------------------
    | Application cache
@@ -57,7 +64,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', true),
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------

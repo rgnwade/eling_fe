@@ -10,6 +10,10 @@ class CartItem
     public $qty;
     public $product;
     public $options;
+    public $total;
+    public $total_vendor;
+    public $details;
+
 
     public function __construct($item)
     {
@@ -17,6 +21,9 @@ class CartItem
         $this->qty = $item->quantity;
         $this->product = $item->attributes['product'];
         $this->options = $item->attributes['options'];
+        $this->details = $item->attributes['details'];
+        $this->total =  $this->qty * $this->product->price->amount();
+        $this->total_vendor =  $this->qty * $this->product->vendor_price->amount();
     }
 
     public function unitPrice()
@@ -27,6 +34,11 @@ class CartItem
     public function total()
     {
         return $this->unitPrice()->multiply($this->qty);
+    }
+
+    public function company()
+    {
+        return $this->product->company;
     }
 
     public function optionsPrice()

@@ -4,7 +4,7 @@ export default class {
     constructor() {
         Dropzone.autoDiscover = false;
 
-        this.dropzone = new Dropzone('.dropzone', {
+        this.dropzone = new Dropzone('#dropzone', {
             url: route('admin.media.store'),
             autoProcessQueue: true,
             maxFilesize: FleetCart.maxFileSize,

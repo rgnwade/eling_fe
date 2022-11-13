@@ -51,8 +51,8 @@ $(function () {
             transformResult(response) {
                 let products = response.data.map((product) => {
                     return {
-                        value: product.name.toLowerCase(),
-                        label: product.name.toLowerCase(),
+                        value: product.brand_name,
+                        label: product.brand_name,
                     };
                 });
 
@@ -1153,107 +1153,107 @@ $(function () {
     /*      checkout
     /*----------------------------------------*/
 
-    // $('#billing-country, #shipping-country').on('change', (e) => {
-    //     let stateFieldSelector;
-    //     let inputField;
-    //     let selectField;
+    $('#billing-country, #shipping-country').on('change', (e) => {
+        let stateFieldSelector;
+        let inputField;
+        let selectField;
 
-    //     if (e.currentTarget.id === 'billing-country') {
-    //         stateFieldSelector = '#billing-state';
+        if (e.currentTarget.id === 'billing-country') {
+            stateFieldSelector = '#billing-state';
 
-    //         inputField = $('<input name="billing[state]" class="form-control" id="billing-state">');
-    //         selectField = $('<select name="billing[state]" class="custom-select-black" id="billing-state"></select>');
-    //     } else {
-    //         stateFieldSelector = '#shipping-state';
+            inputField = $('<input name="billing[state]" class="form-control" id="billing-state">');
+            selectField = $('<select name="billing[state]" class="custom-select-black" id="billing-state"></select>');
+        } else {
+            stateFieldSelector = '#shipping-state';
 
-    //         inputField = $('<input name="shipping[state]" class="form-control" id="shipping-state">');
-    //         selectField = $('<select name="shipping[state]" class="custom-select-black" id="shipping-state"></select>');
-    //     }
+            inputField = $('<input name="shipping[state]" class="form-control" id="shipping-state">');
+            selectField = $('<select name="shipping[state]" class="custom-select-black" id="shipping-state"></select>');
+        }
 
-    //     $(stateFieldSelector).prop('disabled', true);
+        $(stateFieldSelector).prop('disabled', true);
 
-    //     $.ajax({
-    //         type: 'GET',
-    //         url: route('countries.states.index', e.currentTarget.value),
-    //         dataType: 'json',
-    //         success(states) {
-    //             let oldState = $(stateFieldSelector).val();
+        $.ajax({
+            type: 'GET',
+            url: route('countries.states.index', e.currentTarget.value),
+            dataType: 'json',
+            success(states) {
+                let oldState = $(stateFieldSelector).val();
 
-    //             if ($.isEmptyObject(states)) {
-    //                 $(stateFieldSelector).replaceWith(inputField).prop('disabled', false);
+                if ($.isEmptyObject(states)) {
+                    $(stateFieldSelector).replaceWith(inputField).prop('disabled', false);
 
-    //                 inputField.on('change', updateTax);
+                    inputField.on('change', updateTax);
 
-    //                 return $(stateFieldSelector).val(oldState);
-    //             }
+                    return $(stateFieldSelector).val(oldState);
+                }
 
-    //             $(stateFieldSelector).replaceWith(selectField);
+                $(stateFieldSelector).replaceWith(selectField);
 
-    //             let options = `<option value="" selected>${trans('storefront::checkout.please_select')}</option>`;
+                let options = `<option value="" selected>${trans('storefront::checkout.please_select')}</option>`;
 
-    //             for (let code in states) {
-    //                 options += `<option value="${code}">${states[code]}</option>`;
-    //             }
+                for (let code in states) {
+                    options += `<option value="${code}">${states[code]}</option>`;
+                }
 
-    //             $(stateFieldSelector).html(options).val(oldState).prop('disabled', false);
+                $(stateFieldSelector).html(options).val(oldState).prop('disabled', false);
 
-    //             selectField.on('change', updateTax);
-    //         },
-    //         error() {
-    //             $(stateFieldSelector).replaceWith(inputField).prop('disabled', false);
+                selectField.on('change', updateTax);
+            },
+            error() {
+                $(stateFieldSelector).replaceWith(inputField).prop('disabled', false);
 
-    //             inputField.on('change', updateTax);
-    //         },
-    //     });
-    // });
+                inputField.on('change', updateTax);
+            },
+        });
+    });
 
-    // $('#billing-country, #shipping-country').trigger('change');
+    $('#billing-country, #shipping-country').trigger('change');
 
-    // $(`
-    //     #billing-city,
-    //     #shipping-city,
-    //     #billing-zip,
-    //     #shipping-zip,
-    //     #billing-country,
-    //     #shipping-country
-    // `).on('change', updateTax);
+    $(`
+        #billing-city,
+        #shipping-city,
+        #billing-zip,
+        #shipping-zip,
+        #billing-country,
+        #shipping-country
+    `).on('change', updateTax);
 
-    // function updateTax() {
-    //     if (addressIsNotEntered()) {
-    //         return;
-    //     }
+    function updateTax() {
+        if (addressIsNotEntered()) {
+            return;
+        }
 
-    //     $.ajax({
-    //         url: route('cart.taxes.store'),
-    //         type: 'POST',
-    //         data: $('#checkout-form').serializeArray(),
-    //         success(response) {
-    //             $('#taxes').html(getTaxesHtml(response.taxes));
-    //             $('#total-amount').text(response.total);
-    //         },
-    //     });
-    // }
+        $.ajax({
+            url: route('cart.taxes.store'),
+            type: 'POST',
+            data: $('#checkout-form').serializeArray(),
+            success(response) {
+                $('#taxes').html(getTaxesHtml(response.taxes));
+                $('#total-amount').text(response.total);
+            },
+        });
+    }
 
-    // function addressIsNotEntered() {
-    //     if ($('.ship-to-a-different-address').hasClass('clicked')) {
-    //         return $('#billing-state').val() === '' || $('#shipping-state').val() === '';
-    //     }
+    function addressIsNotEntered() {
+        if ($('.ship-to-a-different-address').hasClass('clicked')) {
+            return $('#billing-state').val() === '' || $('#shipping-state').val() === '';
+        }
 
-    //     return $('#billing-state').val() === '';
-    // }
+        return $('#billing-state').val() === '';
+    }
 
-    // function getTaxesHtml(taxes) {
-    //     let html = '';
+    function getTaxesHtml(taxes) {
+        let html = '';
 
-    //     for (let tax of taxes) {
-    //         html += `
-    //             <span class="item-amount">
-    //                 ${tax.name}
-    //                 <span>${tax.amount}</span>
-    //             </span>
-    //         `;
-    //     }
+        for (let tax of taxes) {
+            html += `
+                <span class="item-amount">
+                    ${tax.name}
+                    <span>${tax.amount}</span>
+                </span>
+            `;
+        }
 
-    //     return html;
-    // }
+        return html;
+    }
 });

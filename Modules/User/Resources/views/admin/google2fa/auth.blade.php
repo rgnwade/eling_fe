@@ -11,7 +11,11 @@
                 <div class="panel-heading">{{trans('user::users.google2fa')}}</div>
 ​
                 <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('2fa') }}">
+                    @if(Auth::user()->isAdmin())
+                        <form class="form-horizontal" method="POST" action="{{ route('2fa') }}">
+                    @else
+                        <form class="form-horizontal" method="POST" action="{{ route('vendor.2fa') }}">
+                    @endif
                         {{ csrf_field() }}
 ​
                         <div class="form-group">

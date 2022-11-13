@@ -27,6 +27,7 @@
     <script>
         Mousetrap.bind('u', function() {
             $('.dropzone').trigger('click');
+            $('.dropzoneFile').trigger('click');
         });
 
         Mousetrap.bind('del', function () {

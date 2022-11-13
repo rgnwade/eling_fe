@@ -22,7 +22,7 @@ class ReportServiceProvider extends ServiceProvider
             $view->with('request', $this->app['request']);
         });
 
-        $this->addAdminAssets('admin.reports.index', ['admin.report.css', 'admin.report.js']);
+        $this->addAdminPanelAssets('admin.reports.index', ['admin.report.css', 'admin.report.js']);
     }
 
     /**

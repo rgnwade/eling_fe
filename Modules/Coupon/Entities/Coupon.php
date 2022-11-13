@@ -43,8 +43,11 @@ class Coupon extends Model
         'is_active',
         'minimum_spend',
         'maximum_spend',
+        'maximum_discount',
         'usage_limit_per_coupon',
         'usage_limit_per_customer',
+        'usage_only_for_new_customer',
+        
     ];
 
     /**
@@ -291,4 +294,7 @@ class Coupon extends Model
         $this->syncCategories(array_get($attributes, 'categories', []));
         $this->syncExcludeCategories(array_get($attributes, 'exclude_categories', []));
     }
+
+
+   
 }

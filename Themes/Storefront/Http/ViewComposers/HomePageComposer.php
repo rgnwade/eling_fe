@@ -7,6 +7,7 @@ use Modules\Product\RecentlyViewed;
 use Modules\Slider\Entities\Slider;
 use Themes\Storefront\Admin\Banner;
 use Modules\Product\Entities\Product;
+use Modules\Category\Entities\Category;
 
 class HomePageComposer
 {
@@ -42,7 +43,9 @@ class HomePageComposer
             'features' => $this->getFeatures(),
             'carouselProducts' => $this->getCarouselProducts(),
             'recentProducts' => $this->getRecentProducts(),
+            'category' => $this->getCategory(),
             'bannerSectionTwoBanner' => $this->getBannerSectionTwoBanner(),
+            'popUpBanner' => $this->getPopUpBanner(),
             'threeColumnCarouselProducts' => $this->getThreeColumnCarouselProducts(),
             'landscapeProducts' => $this->getLandscapeProducts(),
             'bannerSectionThreeBanners' => $this->getBannerSectionThreeBanners(),
@@ -93,10 +96,22 @@ class HomePageComposer
             ->get();
     }
 
+    private function getCategory()
+    {
+        return Category::where('is_storefront', true)->first();
+    }
+
     private function getBannerSectionTwoBanner()
     {
         if (setting('storefront_banner_section_2_enabled')) {
             return Banner::findByName('storefront_banner_section_2_banner');
+        }
+    }
+
+    private function getPopUpBanner()
+    {
+        if (setting('storefront_banner_pop_up_enabled')) {
+            return Banner::findByName('storefront_banner_pop_up_banner');
         }
     }
 

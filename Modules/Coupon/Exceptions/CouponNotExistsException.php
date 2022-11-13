@@ -13,6 +13,13 @@ class CouponNotExistsException extends Exception
      */
     public function render()
     {
+        if (request()->wantsJson()) {
+            return [
+                "success" => false,
+                "errors" => trans('coupon::messages.not_exists'),
+            ];
+        }
+
         return redirect()->route('cart.index')->withInput()
             ->with('error', trans('coupon::messages.not_exists'));
     }

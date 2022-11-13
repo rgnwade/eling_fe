@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\ScaffoldModuleCommand::class,
         Commands\ScaffoldEntityCommand::class,
         Commands\SitemapCommand::class,
+        Commands\UpdateProductsKeyword::class,
     ];
 
     /**

@@ -32,4 +32,16 @@ class RouteServiceProvider extends ServiceProvider
     {
         return __DIR__ . '/../Routes/admin.php';
     }
+
+     /**
+     * Get admin routes.
+     *
+     * @return string
+     */
+    protected function vendor()
+    {
+        return __DIR__ . '/../Routes/vendor.php';
+    }
+
+
 }

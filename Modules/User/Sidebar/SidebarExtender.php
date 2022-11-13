@@ -29,6 +29,14 @@ class SidebarExtender extends BaseSidebarExtender
                     );
                 });
 
+                $item->item(trans('user::sidebar.verification'), function (Item $item) {
+                    $item->weight(8);
+                    $item->route('admin.verify.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('admin.verify.index')
+                    );
+                });
+
                 // roles
                 $item->item(trans('user::sidebar.roles'), function (Item $item) {
                     $item->weight(10);
@@ -38,6 +46,8 @@ class SidebarExtender extends BaseSidebarExtender
                     );
                 });
 
+
+
                 // Activity Log
                 $item->item(trans('user::sidebar.log'), function (Item $item) {
                     $item->weight(30);
@@ -46,6 +56,17 @@ class SidebarExtender extends BaseSidebarExtender
                         $this->auth->hasAccess('admin.log.index')
                     );
                 });
+            });
+        });
+
+        $menu->group(trans('admin::sidebar.content'), function (Group $group) {
+            $group->item(trans('user::sidebar.user'), function (Item $item) {
+                $item->icon('fa fa-user');
+                $item->weight(30);
+                $item->route('vendor.users.index');
+                $item->authorize(
+                    $this->auth->hasAccess('vendor.users.index')
+                );
             });
         });
     }

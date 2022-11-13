@@ -8,7 +8,9 @@
                 <p>{{ $bannerSectionTwoBanner->caption_2 }}</p>
                 <span>
                     {{ $bannerSectionTwoBanner->call_to_action_text }}
-                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                    @if($bannerSectionTwoBanner->call_to_action_text) 
+                        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                    @endif
                 </span>
             </div>
         </div>

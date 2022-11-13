@@ -7,6 +7,8 @@ use Modules\Order\Entities\Order;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
 use Modules\Order\Mail\OrderStatusChanged;
+use Modules\Order\Entities\OrderPayment;
+
 
 class OrderStatusController extends Controller
 {
@@ -19,6 +21,12 @@ class OrderStatusController extends Controller
     public function update(Order $order)
     {
         $order->update(['status' => request('status')]);
+        
+        if (request('status') == Order::CANCELED) {
+            OrderPayment::where('order_id', $order->id)
+                ->where('status', '!=', OrderPayment::status_paid)
+                ->update(['status' => OrderPayment::status_canceled]);
+        }
 
         $message = trans('order::messages.status_updated');
 

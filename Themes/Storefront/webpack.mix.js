@@ -3,6 +3,8 @@ let execSync = require('child_process').execSync;
 
 mix.js('Themes/Storefront/resources/assets/admin/js/main.js', 'Themes/Storefront/assets/admin/js/storefront.js')
     .js('Themes/Storefront/resources/assets/public/js/app-vue.js', 'Themes/Storefront/assets/public/js/app-vue.js')
+    .js('Themes/Storefront/resources/assets/public/js/cart-vue.js', 'Themes/Storefront/assets/public/js/cart-vue.js')
+    .js('Themes/Storefront/resources/assets/public/js/product-detail-vue.js', 'Themes/Storefront/assets/public/js/product-detail-vue.js')
     .js('Themes/Storefront/resources/assets/public/js/app-show-order.js', 'Themes/Storefront/assets/public/js/app-show-order.js')
     .js('Themes/Storefront/resources/assets/public/js/app.js', 'Themes/Storefront/assets/public/js/app.js')
     .js('Themes/Storefront/resources/assets/public/js/stripe.js', 'Themes/Storefront/assets/public/js/stripe.js')

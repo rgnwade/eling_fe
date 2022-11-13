@@ -90,6 +90,7 @@ class SettingTabs extends Tabs
                 'store_phone',
                 'whatsapp',
                 'store_email',
+                'notif_receiving_emails',
                 'store_address_1',
                 'store_address_2',
                 'store_city',

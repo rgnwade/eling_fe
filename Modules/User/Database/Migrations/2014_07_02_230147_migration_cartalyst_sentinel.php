@@ -37,7 +37,7 @@ class MigrationCartalystSentinel extends Migration
             $table->string('password');
             $table->text('permissions')->nullable();
             $table->datetime('last_login')->nullable();
-            $table->text('google2fa_secret')->nullable();
+            $table->text('google2fa_secret');
             $table->timestamps();
         });
 

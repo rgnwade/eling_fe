@@ -3,6 +3,7 @@
 namespace Modules\User\Admin;
 
 use Modules\Admin\Ui\AdminTable;
+use Modules\User\Entities\Role;
 
 class UserTable extends AdminTable
 {
@@ -11,7 +12,7 @@ class UserTable extends AdminTable
      *
      * @var array
      */
-    protected $rawColumns = ['last_login'];
+    protected $rawColumns = ['last_login', 'roles' ];
 
     /**
      * Make table response for the resource.
@@ -21,8 +22,14 @@ class UserTable extends AdminTable
     public function make()
     {
         return $this->newTable()
-            ->editColumn('last_login', function ($user) {
+            ->addColumn('last_login', function ($user) {
                 return view('admin::partials.table.date')->with('date', $user->last_login);
+            })
+             ->addColumn('roles', function ($user) {
+                return $user->firstRoles();
+            })
+             ->addColumn('chat_admin', function ($user) {
+                return ($user->chat_admin ? '✓'  : '-' );
             });
     }
 }

@@ -7,15 +7,22 @@ use Modules\User\Admin\UserTable;
 use Modules\Review\Entities\Review;
 use Illuminate\Auth\Authenticatable;
 use Modules\Product\Entities\Product;
+use Modules\Company\Entities\Company;
 use Modules\User\Repositories\Permission;
 use Cartalyst\Sentinel\Users\EloquentUser;
 use Cartalyst\Sentinel\Laravel\Facades\Activation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Support\Str;
+use Modules\User\Entities\UserInfo;
+use Modules\User\Admin\VerifyTable;
+use Modules\Media\Entities\File;
+use Modules\Media\Eloquent\HasMedia;
 
 class User extends EloquentUser implements AuthenticatableContract
 {
     use Authenticatable;
+    use HasMedia;
 
     /**
      * The attributes that should be mutated to dates.
@@ -30,8 +37,23 @@ class User extends EloquentUser implements AuthenticatableContract
         'last_name',
         'first_name',
         'permissions',
+        'company_id',
+        'position',
         'google2fa_secret',
+        'chat_admin',
+        'company_name',
+        'register_type',
+        'status'
     ];
+
+    const CUSTOMER = 'customer';
+    const CUSTOMER_B2C = 'customer_b2c';
+    const LOCAL_MERCHANT = 'local_merchant';
+    const INTERNATIONAL_MERCHANT = 'international_merchant';
+
+    const UNCOMPLETED = 'uncompleted';
+    const ON_VERIFICATION = 'on_verification';
+    const VERIFIED = 'verified';
 
     public static function registered($email)
     {
@@ -63,6 +85,15 @@ class User extends EloquentUser implements AuthenticatableContract
      *
      * @return bool
      */
+
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function ($model) {
+            $model->uuid = Str::uuid();
+        });
+    }
+
     public function isCustomer()
     {
         if ($this->hasRoleName('admin')) {
@@ -70,6 +101,31 @@ class User extends EloquentUser implements AuthenticatableContract
         }
 
         return $this->hasRoleId(setting('customer_role'));
+    }
+
+    public function isAdmin()
+    {
+        if ($this->hasRoleName('admin') or $this->hasRoleName('admin content')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function firstRoles()
+    {
+        // if ($this->hasRoleName('admin')) {
+        //     return 'admin';
+        // }
+        // else if ($this->hasRoleName('seller')) {
+        //     return 'seller';
+        // }
+
+        if ($this->roles()->first() != null) {
+            return $this->roles()->first()->name;
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -102,7 +158,7 @@ class User extends EloquentUser implements AuthenticatableContract
      */
     public function hasRoleName($name)
     {
-        return $this->roles()->whereTranslation('name', $name)->count() !== 0;
+        return $this->roles()->whereTranslationLike('name', '%' . $name . '%')->count() !== 0;
     }
 
     /**
@@ -166,6 +222,13 @@ class User extends EloquentUser implements AuthenticatableContract
         return $this->hasMany(Review::class, 'reviewer_id');
     }
 
+
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     /**
      * Get the full name of the user.
      *
@@ -222,4 +285,96 @@ class User extends EloquentUser implements AuthenticatableContract
     {
         return new UserTable($this->newQuery());
     }
+
+    public function tableVerify()
+    {
+        $query =  $this->newQuery()->where('status', SELF::ON_VERIFICATION);
+        return new VerifyTable($query);
+    }
+
+    public static function getChatAdmins()
+    {
+        return static::where('chat_admin', true)->get();
+    }
+
+    public function isUnCompletedAccount()
+    {
+        return $this->status == SELF::UNCOMPLETED;
+    }
+
+    public function isOnProcessVerification()
+    {
+        return $this->status == SELF::ON_VERIFICATION;
+    }
+
+    public function isCustomerType()
+    {
+        return $this->register_type == SELF::CUSTOMER;
+    }
+
+    public function isCustomerB2CType()
+    {
+        return $this->register_type == SELF::CUSTOMER_B2C;
+    }
+
+    public function getAttachment($attachment)
+    {
+        return $this->files->where('pivot.zone', $attachment)->first() ?: new File;
+    }
+
+    public function isLocalMerchantType()
+    {
+        return $this->register_type == SELF::LOCAL_MERCHANT;
+    }
+
+    public function isIntMerchantType()
+    {
+        return $this->register_type == SELF::INTERNATIONAL_MERCHANT;
+    }
+
+
+    public function completedRegisterCustomer()
+    {
+
+        $company = $this->company ?: new Company();
+        if ($this->isCustomerType()) {
+            $informations = $company->companyInfo;
+            $documents =  $this->getCompanyDocuments($company, $informations, Company::CUSTOMER_DOC);
+        }
+        if ($this->isCustomerB2CType()) {
+            $documents =  $this->getCompanyDocuments($company, $this->informations, ['ktp']);
+        }
+        if (empty($documents)) {
+            return false;
+        }
+        return true;
+    }
+
+    private function getCompanyDocuments($company, $informations, $keys)
+    {
+        $documents = [];
+        foreach ($keys as $key) {
+            foreach ($informations as $info) {
+                if ($key == $info->title) {
+                    $file = $company->getAttachment($key);
+                    $documents[] = [
+                        'path' => $file->path,
+                        'thumb' => $file->thumb,
+                        'filename' => $file->filename,
+                        'ext' => $file->extension,
+                        'title' => $info->title,
+                        'value' => $info->value,
+                    ];
+                    break;
+                }
+            }
+        }
+        return $documents;
+    }
+
+    public function informations()
+    {
+        return $this->hasMany(UserInfo::class, 'user_id');
+    }
+
 }

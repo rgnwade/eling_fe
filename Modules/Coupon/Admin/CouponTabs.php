@@ -59,7 +59,7 @@ class CouponTabs extends Tabs
     {
         return tap(new Tab('usage_limits', trans('coupon::coupons.tabs.usage_limits')), function (Tab $tab) {
             $tab->weight(15);
-            $tab->fields(['usage_limit_per_coupon', 'usage_limit_per_customer']);
+            $tab->fields(['usage_limit_per_coupon', 'usage_limit_per_customer','usage_only_for_new_customer']);
             $tab->view('coupon::admin.coupons.tabs.usage_limits');
         });
     }

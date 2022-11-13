@@ -14,6 +14,7 @@
         @include('order::admin.orders.partials.address_information')
         @include('order::admin.orders.partials.items_ordered')
         @include('order::admin.orders.partials.order_totals')
+        @include('order::admin.orders.partials.payment_list')
         @include('public.account.orders.resi_modal')
     </div>
     <script src="{{ v(Theme::url('public/js/app-show-order.js')) }}"></script>

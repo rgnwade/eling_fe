@@ -4,6 +4,7 @@
 .env
 .docker-sync
 /jenkins/jenkins_home
+/nginx/sites/default.conf
 
 /logstash/pipeline/*.conf
 /logstash/config/pipelines.yml

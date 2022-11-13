@@ -5,12 +5,12 @@
         </div>
     <?php else: ?>
         <div class="image-holder">
-            <img src="<?php echo e($product->base_image->path); ?>">
+            <img src="<?php echo e($product->base_image->thumb); ?>">
         </div>
     <?php endif; ?>
 
     <div class="single-product-details">
-        <span class="product-name"><?php echo e($product->name); ?></span>
+        <span class="product-name"><?php echo e($product->brand_name); ?></span>
 
         <span class="product-price">
             <?php echo e(product_price($product)); ?>

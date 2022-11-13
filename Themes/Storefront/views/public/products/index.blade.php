@@ -19,7 +19,11 @@
                         @if (request()->has('query'))
                             <h3>{{ trans('storefront::products.search_results_for') }}: "{{ request('query') }}"</h3>
                         @else
-                            <h3>{{ trans('storefront::products.shop') }}</h3>
+                            @if ($category)
+                                <h3>{{$category}}</h3>
+                            @else
+                                <h3>{{ trans('storefront::products.shop') }}</h3>
+                            @endif
                         @endif
 
                         <span>{{ intl_number($products->total()) }} {{ trans_choice('storefront::products.products_found', $products->total()) }}</span>

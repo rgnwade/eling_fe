@@ -3,6 +3,7 @@
 return [
     'welcome' => 'Welcome :name!',
     'account_created' => 'Your account has been created successfully.',
+    'activation_link' => "Please click this <a href=':url'> link </a> for activate your account",
     'reset_your_account_password' => 'Reset your account password',
     'received_a_password_reset_request' => 'You are receiving this email because we received a password reset request for your account.',
     'reset_password' => 'Reset Password',

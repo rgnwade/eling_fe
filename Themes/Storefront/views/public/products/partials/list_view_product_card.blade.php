@@ -62,7 +62,7 @@
                     {{ csrf_field() }}
 
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
-                    <input type="hidden" name="qty" value="1">
+                    <input type="hidden" name="qty" value="{{$product->minimum_order}}">
 
                     <button type="submit" class="add-to-cart btn btn-primary" {{ $product->isOutOfStock() ? 'disabled' : '' }} data-loading>
                         {{ trans('storefront::product_card.add_to_cart') }}

@@ -2,12 +2,11 @@
 
 namespace Modules\Category\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller;
 use Modules\Category\Entities\Category;
 use Modules\Admin\Traits\HasCrudActions;
 use Modules\Category\Http\Requests\SaveCategoryRequest;
 
-class CategoryController extends Controller
+class CategoryController
 {
     use HasCrudActions;
 
@@ -47,7 +46,7 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        return Category::withoutGlobalScope('active')->find($id);
+        return Category::with('files')->withoutGlobalScope('active')->find($id);
     }
 
     /**

@@ -17,7 +17,7 @@ class CreatePagesTable extends Migration
             $table->string('slug')->unique();
             $table->integer('category_id')->unsigned()->default(0);
             $table->boolean('is_active');
-            $table->integer('created_by')->unsigned();
+            $table->int('created_by')->unsigned();
             $table->timestamps();
         });
     }

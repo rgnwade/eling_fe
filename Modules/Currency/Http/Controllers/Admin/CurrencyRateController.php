@@ -8,7 +8,7 @@ use Modules\Admin\Traits\HasCrudActions;
 use Modules\Currency\Entities\CurrencyRate;
 use Modules\Currency\Services\CurrencyRateExchanger;
 use Modules\Currency\Http\Requests\UpdateCurrencyRateRequest;
-
+use FleetCart\Jobs\RefreshProductRate;
 class CurrencyRateController extends Controller
 {
     use HasCrudActions;
@@ -54,5 +54,31 @@ class CurrencyRateController extends Controller
         }
 
         CurrencyRate::refreshRates($exchanger);
+    }
+
+
+    public function update($id)
+    {
+        $entity = $this->getEntity($id);
+
+        $this->disableSearchSyncing();
+
+        $entity->update(
+            $this->getRequest('update')->all()
+        );
+
+        $this->createLog($entity, 'edit', $this->getRequest('update'));
+        
+        RefreshProductRate::dispatch();
+
+        $this->searchable($entity);
+
+        if (method_exists($this, 'redirectTo')) {
+            return $this->redirectTo($entity)
+                ->withSuccess(trans('admin::messages.resource_saved', ['resource' => $this->getLabel()]));
+        }
+
+        return redirect()->back()
+            ->withSuccess(trans('admin::messages.resource_saved', ['resource' => $this->getLabel()]));
     }
 }

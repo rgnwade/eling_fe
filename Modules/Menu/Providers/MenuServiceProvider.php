@@ -21,8 +21,8 @@ class MenuServiceProvider extends ServiceProvider
     {
         TabManager::register('menu_items', MenuItemTabs::class);
 
-        $this->addAdminAssets('admin.menus.(create|edit)', ['admin.menu.css', 'admin.menu.js']);
-        $this->addAdminAssets('admin.menus.items.(create|edit)', ['admin.menu.js']);
+        $this->addAdminPanelAssets('admin.menus.(create|edit)', ['admin.menu.css', 'admin.menu.js']);
+        $this->addAdminPanelAssets('admin.menus.items.(create|edit)', ['admin.menu.js']);
     }
 
     /**

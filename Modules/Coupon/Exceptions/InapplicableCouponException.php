@@ -13,6 +13,13 @@ class InapplicableCouponException extends Exception
      */
     public function render()
     {
+        if (request()->wantsJson()) {
+            return [
+                "success" => false,
+                "errors" => trans('coupon::messages.inapplicable'),
+            ];
+        }
+
         return redirect()->route('cart.index')->withInput()
             ->with('error', trans('coupon::messages.inapplicable'));
     }

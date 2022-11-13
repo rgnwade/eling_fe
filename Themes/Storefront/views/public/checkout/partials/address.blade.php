@@ -13,7 +13,7 @@
                         {{ trans('storefront::checkout.tabs.attributes.customer_email') }}<span>*</span>
                     </label>
 
-                    <input type="text" name="customer_email" class="form-control" id="customer-email" value="{{ old('customer_email') }}">
+                    <input type="text" name="customer_email" class="form-control" id="customer-email" value="{{  old('customer_email') ? old('customer_email') : ($last_order ?  $last_order->customer_email : '') }} ">
 
                     {!! $errors->first('customer_email', '<span class="error-message">:message</span>') !!}
                 </div>
@@ -25,7 +25,7 @@
                         {{ trans('storefront::checkout.tabs.attributes.customer_phone') }}
                     </label>
 
-                    <input type="text" name="customer_phone" class="form-control" id="customer-phone" value="{{ old('customer_phone') }}">
+                    <input type="text" name="customer_phone" class="form-control" id="customer-phone"  value="{{  old('customer_phone') ? old('customer_phone') : ($last_order ?  $last_order->customer_phone : '') }} ">
 
                     {!! $errors->first('customer_phone', '<span class="error-message">:message</span>') !!}
                 </div>

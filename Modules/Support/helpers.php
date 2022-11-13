@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Support\Facades\Cookie;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Modules\Support\Chat;
 
 if (! function_exists('str_between')) {
     /**
@@ -74,7 +75,7 @@ if (! function_exists('currency')) {
      */
     function currency()
     {
-        if (app('inBackend')) {
+        if (app('inAdminPanel')) {
             return setting('default_currency');
         }
 
@@ -330,5 +331,12 @@ if (! function_exists('array_reset_index')) {
         }
 
         return $array;
+    }
+}
+
+if (! function_exists('chat_admins')) {
+    function chat_admins()
+    {
+       return Chat::getChatAdmin();
     }
 }

@@ -24,6 +24,7 @@ class CoreServiceProvider extends ServiceProvider
     protected $middleware = [
         'auth' => \Modules\Core\Http\Middleware\Authenticate::class,
         'admin' => \Modules\Core\Http\Middleware\AdminMiddleware::class,
+        'vendor' => \Modules\Core\Http\Middleware\VendorMiddleware::class,
         'guest' => \Modules\Core\Http\Middleware\GuestMiddleware::class,
         'can' => \Modules\Core\Http\Middleware\Authorization::class,
         'localize' => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,
@@ -49,8 +50,8 @@ class CoreServiceProvider extends ServiceProvider
         $this->setupAppTimezone();
         $this->setupMailConfig();
         $this->registerMiddleware();
-        $this->registerInBackendState();
-        $this->blacklistAdminRoutesOnFrontend();
+        $this->registerInAdminPanelState();
+        $this->blacklistAdminPanelRoutesOnFrontend();
         $this->registerModelFactories();
         $this->registerModuleResourceNamespaces();
     }
@@ -178,21 +179,21 @@ class CoreServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register inBackend state to the IoC container.
+     * Register inAdminPanel state to the IoC container.
      *
      * @return void
      */
-    private function registerInBackendState()
+    private function registerInAdminPanelState()
     {
         if ($this->app->runningInConsole()) {
-            return $this->app['inBackend'] = false;
+            return $this->app['inAdminPanel'] = false;
         }
 
-        $index = in_array($this->app['request']->segment(1), setting('supported_locales'))
-            ? 2
-            : 1;
+        $urlParts = explode('.', $_SERVER['HTTP_HOST']);
+        $subdomain = $urlParts[0];
 
-        $this->app['inBackend'] = $this->app['request']->segment($index) === 'admin';
+        $this->app['inAdminPanel'] = ($subdomain === config('app.prefix_admin_url') ||  $subdomain === config('app.prefix_vendor_url'));
+
     }
 
     /**
@@ -200,9 +201,9 @@ class CoreServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function blacklistAdminRoutesOnFrontend()
+    private function blacklistAdminPanelRoutesOnFrontend()
     {
-        if (! $this->app['inBackend'] && $this->app->configurationIsCached()) {
+        if (! $this->app['inAdminPanel'] && $this->app->configurationIsCached()) {
             $this->app['config']->set('ziggy.blacklist', ['admin.*']);
         }
     }

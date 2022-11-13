@@ -3,14 +3,17 @@
 namespace Modules\Category\Entities;
 
 use TypiCMS\NestableTrait;
+use Modules\Media\Entities\File;
 use Modules\Support\Eloquent\Model;
+use Modules\Media\Eloquent\HasMedia;
 use Illuminate\Support\Facades\Cache;
+use Modules\Product\Entities\Product;
 use Modules\Support\Eloquent\Sluggable;
 use Modules\Support\Eloquent\Translatable;
 
 class Category extends Model
 {
-    use Translatable, Sluggable, NestableTrait;
+    use Translatable, Sluggable, HasMedia, NestableTrait;
 
     /**
      * The relations to eager load on every query.
@@ -18,13 +21,14 @@ class Category extends Model
      * @var array
      */
     protected $with = ['translations'];
+    protected $hidden = ['translations'];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['parent_id', 'slug', 'position', 'is_searchable', 'is_active'];
+    protected $fillable = ['parent_id', 'slug', 'position', 'is_searchable', 'is_active','is_storefront'];
 
     /**
      * The attributes that should be cast to native types.
@@ -33,6 +37,7 @@ class Category extends Model
      */
     protected $casts = [
         'is_searchable' => 'boolean',
+        'is_storefront' => 'boolean',
         'is_active' => 'boolean',
     ];
 
@@ -105,5 +110,52 @@ class Category extends Model
         return Cache::tags(['categories'])->rememberForever('categories.searchable:' . locale(), function () {
             return static::where('is_searchable', true)->get();
         });
+    }
+
+    function child()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_categories');
+    }
+
+    public static function findBySlug($slug)
+    {
+        return static::with('files')->where('slug', $slug)->firstOrNew([]);
+    }
+
+    public function getLogoAttribute()
+    {
+        return $this->files->where('pivot.zone', 'logo')->first() ?: new File;
+    }
+
+    public function getBannerAttribute()
+    {
+        return $this->files->where('pivot.zone', 'banner')->first() ?: new File;
+    }
+
+    public function toArray()
+    {
+        $attributes = parent::toArray();
+
+        if ($this->relationLoaded('files')) {
+            $attributes += [
+                'logo' => [
+                    'id' => $this->logo->id,
+                    'path' => $this->logo->path,
+                    'exists' => $this->logo->exists,
+                ],
+                'banner' => [
+                    'id' => $this->banner->id,
+                    'path' => $this->banner->path,
+                    'exists' => $this->banner->exists,
+                ],
+            ];
+        }
+
+        return $attributes;
     }
 }

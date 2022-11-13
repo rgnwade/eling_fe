@@ -14,10 +14,8 @@ export default class {
         selector.on('loaded.jstree', () => selector.jstree('open_all'));
 
         // On updating category tree.
-        $(document).on('dnd_stop.vakata', (e, node) => {
-            setTimeout(() => {
-                this.updateCategoryTree(node);
-            }, 100);
+        this.selector.on('move_node.jstree', (e, data) => {
+            this.updateCategoryTree(data);
         });
     }
 
@@ -31,8 +29,8 @@ export default class {
         });
     }
 
-    updateCategoryTree(node) {
-        this.loading(node, true);
+    updateCategoryTree(data) {
+        this.loading(data.node, true);
 
         $.ajax({
             type: 'PUT',
@@ -41,12 +39,12 @@ export default class {
             success: (message) => {
                 success(message);
 
-                this.loading(node, false);
+                this.loading(data.node, false);
             },
             error: (xhr) => {
-                error(`${xhr.statusText}: ${xhr.responseJSON.message}`);
+                error(xhr.responseJSON.message);
 
-                this.loading(node, false);
+                this.loading(data.node, false);
             },
         });
     }
@@ -64,12 +62,12 @@ export default class {
     }
 
     loading(node, state) {
-        for (let nodeElement of node.data.obj) {
-            if (state) {
-                $(nodeElement).addClass('jstree-loading');
-            } else {
-                $(nodeElement).removeClass('jstree-loading');
-            }
+        let nodeElement = this.selector.jstree().get_node(node, true);
+
+        if (state) {
+            $(nodeElement).addClass('jstree-loading');
+        } else {
+            $(nodeElement).removeClass('jstree-loading');
         }
     }
 }

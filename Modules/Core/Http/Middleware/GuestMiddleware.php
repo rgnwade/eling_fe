@@ -17,7 +17,7 @@ class GuestMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check()) {
-            $route = app('inBackend') ? 'admin.dashboard.index' : 'account.dashboard.index';
+            $route = app('inAdminPanel') ? 'admin.dashboard.index' : 'account.dashboard.index';
 
             return redirect()->route($route);
         }

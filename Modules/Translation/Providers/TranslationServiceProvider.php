@@ -29,7 +29,7 @@ class TranslationServiceProvider extends ServiceProvider
 
         $this->setupTranslatable();
 
-        $this->addAdminAssets('admin.translations.index', ['admin.translation.css', 'admin.translation.js']);
+        $this->addAdminPanelAssets('admin.translations.index', ['admin.translation.css', 'admin.translation.js']);
     }
 
     private function setupTranslatable()

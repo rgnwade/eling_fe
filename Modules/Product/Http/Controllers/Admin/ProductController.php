@@ -7,7 +7,7 @@ use Modules\Product\Entities\Product;
 use Modules\Admin\Traits\HasCrudActions;
 use Modules\Product\Http\Requests\SaveProductRequest;
 use Modules\Product\Events\ProductViewed;
-use Modules\Core\Http\Traits\LogTrait;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -79,6 +79,10 @@ class ProductController extends Controller
 
         $this->searchable($entity);
 
+        DB::table('products')
+        ->where('id', $entity->id)
+        ->update(['keyword' =>  $entity->keyword()]);
+
         if (method_exists($this, 'redirectTo')) {
             return $this->redirectTo($entity)
                 ->withSuccess(trans('admin::messages.resource_saved', ['resource' => $this->getLabel()]));
@@ -107,11 +111,10 @@ class ProductController extends Controller
 
     private function getReviews($product)
     {
-        if (! setting('reviews_enabled')) {
+        if (!setting('reviews_enabled')) {
             return collect();
         }
 
         return $product->reviews()->paginate(15, ['*'], 'reviews');
     }
-
 }

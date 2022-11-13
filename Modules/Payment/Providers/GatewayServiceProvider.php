@@ -31,12 +31,12 @@ class GatewayServiceProvider extends ServiceProvider
         $this->registerCashOnDelivery();
         $this->registerBankTransfer();
         $this->registerCheckPayment();
-        
+
     }
 
     private function enabled($paymentMethod)
     {
-        if (app('inBackend')) {
+        if (app('inAdminPanel')) {
             return true;
         }
 
@@ -59,7 +59,7 @@ class GatewayServiceProvider extends ServiceProvider
 
     private function registerInstamojo()
     {
-        if ((setting('instamojo_enabled') && currency() === 'INR') || app('inBackend')) {
+        if ((setting('instamojo_enabled') && currency() === 'INR') || app('inAdminPanel')) {
             Gateway::register('instamojo', new Instamojo);
         }
     }

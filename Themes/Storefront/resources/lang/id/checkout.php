@@ -29,8 +29,8 @@ return [
                 'address_1' => 'Address 1',
                 'address_2' => 'Address 2',
                 'city' => 'City',
-                'district' => 'Kecamatan',
-                'courier' => 'Kurir',
+                'district' => 'District',
+                'courier' => 'Courier',
                 'zip' => 'Postcode / ZIP',
                 'country' => 'Country',
                 'state' => 'State / Province',
@@ -51,6 +51,10 @@ return [
         ],
         'payment' => [
             'payment_method' => 'Payment Method',
+            'payment_terms' => 'Payment Terms',
+            'full_payment' => 'Full Payment',
+            'full_payment' => 'Full Payment',
+            'advancePayment' => 'Advance Payment',
             'no_payment_method' => 'No payment method is found.',
         ],
         'confirm' => [

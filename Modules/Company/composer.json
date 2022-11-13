@@ -1,0 +1,27 @@
+{
+    "name": "fleetcart/Company",
+    "description": "Eling Company Module..",
+    "authors": [
+        {
+            "name": "Gery Dabarto",
+            "email": "geryarrahman@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Company\\": ""
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev"
+}

@@ -21,6 +21,7 @@ abstract class RouteServiceProvider extends ServiceProvider
             'middleware' => ['localize', 'locale_session_redirect', 'localization_redirect', 'web'],
         ], function () {
             $this->adminRoutes();
+            $this->vendorRoutes();
             $this->publicRoutes();
         });
     }
@@ -38,11 +39,12 @@ abstract class RouteServiceProvider extends ServiceProvider
 
         Route::group([
             'namespace' => 'Admin',
-            'prefix' => 'admin',
+            'domain' => $this->subdomainUrl(config('app.prefix_admin_url')),
             'middleware' => ['admin','2fa'],
         ], function () {
             require $this->admin();
         });
+
     }
 
     /**
@@ -55,5 +57,29 @@ abstract class RouteServiceProvider extends ServiceProvider
         if (method_exists($this, 'public')) {
             require $this->public();
         }
+    }
+
+    /**
+     * Define the seller routes.
+     *
+     * @return void
+     */
+    private function vendorRoutes()
+    {
+        if (! method_exists($this, 'vendor')) {
+            return;
+        }
+        Route::group([
+            'namespace' => 'Vendor',
+            'domain' => $this->subdomainUrl(config('app.prefix_vendor_url')),
+            'middleware' => ['vendor','2fa'],
+        ], function () {
+            require $this->vendor();
+        });
+    }
+
+    private function subdomainUrl($prefix)
+    {
+        return  $prefix.'.'.str_replace(['https', 'http',':', '/', 'www.'], '', config('app.url'));
     }
 }

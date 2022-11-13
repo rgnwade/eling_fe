@@ -4,8 +4,10 @@
 #--------------------------------------------------------------------------
 #
 
-ARG PHP_VERSION=${PHP_VERSION}
-FROM php:${PHP_VERSION}-alpine
+# ARG PHP_VERSION=${PHP_VERSION}
+# FROM php:${PHP_VERSION}-alpine
+ARG PHP_VERSION=7.3
+FROM php:7.3-alpine
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
@@ -40,6 +42,10 @@ ARG INSTALL_SOAP=false
 RUN if [ ${INSTALL_SOAP} = true ]; then \
     docker-php-ext-install soap \
 ;fi
+
+# intl,
+RUN apk add --update --no-cache libintl icu icu-dev libxml2-dev \
+    && docker-php-ext-install intl 
 
 #Install BCMath package:
 ARG INSTALL_BCMATH=false

@@ -37,7 +37,7 @@ class OrderStatusChanged extends Mailable implements ShouldQueue
     public function getText($order)
     {
         return trans('order::mail.your_order_status_changed_text', [
-            'order_id' => $order->id,
+            'order_id' => '<a href="'.config('app.url').'account/orders/'.$order->id.'" >'.$order->id.'</a>',
             'status' => trans("order::statuses.{$order->status}"),
         ]);
     }

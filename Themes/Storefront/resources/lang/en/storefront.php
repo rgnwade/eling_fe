@@ -2,6 +2,7 @@
 
 return [
     'storefront' => 'Storefront',
+    'chat_login_instruction' => 'silahkan login dahulu untuk chatting',
     'form' => [
         'favicon' => 'Favicon',
         'header_logo' => 'Header Logo',
@@ -21,6 +22,8 @@ return [
         'enable_product_carousel_section' => 'Enable product carousel section',
         'enable_recent_products_section' => 'Enable recent products section',
         'enable_banner_section_2' => 'Enable banner section 2',
+        'enable_banner_pop_up' => 'Enable banner Pop Up',
+        'enable_coupon_email' => 'Enable Coupon Email',
         'enable_three_column_vertical_product_carousel_section' => 'Enable three column vertical product carousel section',
         'enable_landscape_products_section' => 'Enable landscape products section',
         'enable_banner_section_3' => 'Enable banner section 3',
@@ -52,6 +55,7 @@ return [
         'product_carousel' => 'Product Carousel',
         'recent_products' => 'Recent Products',
         'banner_section_2' => 'Banner Section 2',
+        'banner_pop_up' => 'Pop Up Banner',
         'three_column_vertical_product_carousel' => 'Three Column Vertical Product Carousel',
         'landscape_products' => 'Landscape Products',
         'banner_section_3' => 'Banner Section 3',

@@ -19,4 +19,11 @@ return [
     'password_confirmation' => 'Confirm Password',
     'i_agree_to_the' => 'I agree to the',
     'privacy_policy' => 'privacy policy',
+    'register_as' => 'Register As',
+    'company_name' => 'Company Name',
+    'position' => 'Position',
+    'customer' => 'Customer',
+    'local_merchant' => 'Local Seller',
+    'international_merchant' => 'International Seller',
+    'verified' => 'Set to Verified'
 ];

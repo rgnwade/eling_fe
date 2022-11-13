@@ -2,6 +2,7 @@
 
 return [
     'visit_store' => 'Visit Store',
+    'actions' => 'Actions',
     'form' => [
         'please_select' => 'Please Select',
     ],

@@ -13,9 +13,9 @@ trait AddsAsset
      * @param array $assets
      * @return void
      */
-    public function addAdminAssets($routes, array $assets)
+    public function addAdminPanelAssets($routes, array $assets)
     {
-        if (config('app.installed') && $this->app['inBackend']) {
+        if ( $this->app['inAdminPanel']) {
             $this->addAssets($routes, $assets);
         }
     }

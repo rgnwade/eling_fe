@@ -60,12 +60,12 @@ return [
             'visibility' => 'public',
         ],
         'sftp' => [
-            'driver' => 'sftp',
-            'host' => '202.169.52.172',
-            'port' => 48903,
-            'username' => 'administrator',
-            'password' => 'Testing123#',
-            'root' => '/var/web/backup',
+            'driver' => 'ftp',
+            'host' => '202.52.147.123',
+            'port' => 21,
+            'username' => 'elingcoi',
+            'password' => '30mA8f6mxL',
+            'root' => '/backup',
             'timeout' => 10,
         ],
 

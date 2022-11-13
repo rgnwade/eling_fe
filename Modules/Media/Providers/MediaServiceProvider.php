@@ -20,8 +20,11 @@ class MediaServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('media::admin.file_manager.index', AssetsComposer::class);
+        View::composer('media::vendor.file_manager.index', AssetsComposer::class);
 
-        $this->addAdminAssets('admin.(media|file_manager).(index|edit)', ['admin.media.css', 'admin.media.js']);
+
+        $this->addAdminPanelAssets('admin.(media|file_manager).(index|edit)', ['admin.media.css', 'admin.media.js']);
+        $this->addAdminPanelAssets('vendor.(media|file_manager).(index|edit)', ['vendor.media.css', 'vendor.media.js']);
     }
 
     /**

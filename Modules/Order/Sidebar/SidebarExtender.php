@@ -29,5 +29,16 @@ class SidebarExtender extends BaseSidebarExtender
                 });
             });
         });
+
+        $menu->group(trans('admin::sidebar.content'), function (Group $group) {
+            $group->item(trans('order::orders.order'), function (Item $item) {
+                $item->icon('fa fa-dollar');
+                $item->weight(17);
+                $item->route('vendor.orders.index');
+                $item->authorize(
+                    $this->auth->hasAccess('vendor.orders.index')
+                );
+            });
+        });
     }
 }

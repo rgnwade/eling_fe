@@ -178,6 +178,28 @@
 	}
 }
 
+.btn-close-coupon {
+    font-size: 20px;
+    line-height: 15px;
+    display: inline-block;
+    color: #626060;
+    padding: 0;
+    background: transparent;
+    border: none;
+    outline: 0;
+    text-shadow: none;
+    opacity: 0.8;
+    z-index: 999;
+    -webkit-transition: 200ms ease-in-out;
+	transition: 200ms ease-in-out;
+
+	&:hover {
+		@include themify {
+			color: themed('primary');
+		}
+	}
+}
+
 .order-list.cart-list {
 	.table-responsive {
 		td {

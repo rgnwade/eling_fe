@@ -15,8 +15,7 @@
 
 
 FROM redis:latest
-
-ARG REDIS_PASSWORD=gery123!@
+ARG REDIS_PASSWORD=${REDIS_PASSWORD}
 
 RUN mkdir -p /usr/local/etc/redis
 COPY redis.conf /usr/local/etc/redis/redis.conf

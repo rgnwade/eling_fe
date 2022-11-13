@@ -17,15 +17,16 @@
                 </div>
             <?php else: ?>
                 <div class="image-holder">
-                    <img src="<?php echo e($product->base_image->path); ?>">
+                    <img src="<?php echo e($product->base_image->thumb); ?>">
                 </div>
             <?php endif; ?>
-
+            <?php if(!$product->isVideotron()): ?>   
             <div class="quick-view-wrapper" data-toggle="tooltip" data-placement="top" title="<?php echo e(trans('storefront::product_card.quick_view')); ?>">
                 <button type="button" class="btn btn-quick-view" data-slug="<?php echo e($product->slug); ?>">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                 </button>
             </div>
+            <?php endif; ?>
         </div>
 
         <div class="product-content clearfix">
@@ -45,7 +46,7 @@
                 </button>
             </form>
 
-            <?php if($product->options_count > 0): ?>
+            <?php if($product->options_count > 0 || $product->isVideotron()): ?>
                 <button class="btn btn-default btn-add-to-cart" onClick="location = '<?php echo e(route('products.show', ['slug' => $product->slug])); ?>'">
                     <?php echo e(trans('storefront::product_card.view_details')); ?>
 
@@ -54,9 +55,8 @@
                 <form method="POST" action="<?php echo e(route('cart.items.store')); ?>">
                     <?php echo e(csrf_field()); ?>
 
-
                     <input type="hidden" name="product_id" value="<?php echo e($product->id); ?>">
-                    <input type="hidden" name="qty" value="1">
+                    <input type="hidden" name="qty" value="<?php echo e($product->minimum_order); ?>">
 
                     <button class="btn btn-default btn-add-to-cart" <?php echo e($product->isOutOfStock() ? 'disabled' : ''); ?>>
                         <?php echo e(trans('storefront::product_card.add_to_cart')); ?>

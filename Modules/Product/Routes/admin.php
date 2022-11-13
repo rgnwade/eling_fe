@@ -6,6 +6,25 @@ Route::get('products', [
     'middleware' => 'can:admin.products.index',
 ]);
 
+
+Route::get('products_vendor', [
+    'as' => 'admin.products.index_vendor',
+    'uses' => 'ProductRequestController@product',
+    'middleware' => 'can:admin.products.index_vendor',
+]);
+
+Route::put('products_vendor/{id}', [
+    'as' => 'admin.products.update_vendor',
+    'uses' => 'ProductRequestController@update',
+    'middleware' => 'can:admin.products.edit_vendor',
+]);
+
+Route::get('products_vendor/{id}/edit_vendor', [
+    'as' => 'admin.products.edit_vendor',
+    'uses' => 'ProductRequestController@edit',
+    'middleware' => 'can:admin.products.edit_vendor',
+]);
+
 Route::get('products/create', [
     'as' => 'admin.products.create',
     'uses' => 'ProductController@create',

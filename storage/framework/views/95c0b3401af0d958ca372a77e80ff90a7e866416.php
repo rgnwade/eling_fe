@@ -9,7 +9,9 @@
                 <span>
                     <?php echo e($banner->call_to_action_text); ?>
 
-                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                    <?php if(!empty($banner->call_to_action_text)): ?>
+                        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                    <?php endif; ?>
                 </span>
             </div>
         </div>

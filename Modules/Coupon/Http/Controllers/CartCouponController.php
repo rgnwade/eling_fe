@@ -16,6 +16,7 @@ use Modules\Coupon\Checkers\ExcludedCategories;
 use Modules\Coupon\Checkers\UsageLimitPerCoupon;
 use Modules\Coupon\Checkers\ApplicableCategories;
 use Modules\Coupon\Checkers\UsageLimitPerCustomer;
+use Modules\Coupon\Checkers\OnlyNewCustomer;
 
 class CartCouponController extends Controller
 {
@@ -30,6 +31,7 @@ class CartCouponController extends Controller
         ExcludedCategories::class,
         UsageLimitPerCoupon::class,
         UsageLimitPerCustomer::class,
+        OnlyNewCustomer::class
     ];
 
     /**
@@ -50,5 +52,30 @@ class CartCouponController extends Controller
             });
 
         return back()->withSuccess(trans('coupon::messages.applied'));
+    }
+
+    public function redeem()
+    {
+        $coupon = Coupon::where('code', request('coupon'))->first();
+
+        resolve(Pipeline::class)
+            ->send($coupon)
+            ->through($this->checkers)
+            ->then(function ($coupon) {
+                Cart::applyCoupon($coupon);
+            });
+
+        return json_encode([
+            'success' => true,
+            'message' => trans('coupon::messages.applied')
+        ]);
+    }
+
+    public function remove()
+    {
+        Cart::removeOldCoupon();
+        return json_encode([
+            'success' => true
+        ]);
     }
 }

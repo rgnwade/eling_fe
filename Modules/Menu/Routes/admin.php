@@ -36,25 +36,25 @@ Route::delete('menus/{ids?}', [
     'middleware' => 'can:admin.menus.destroy',
 ]);
 
-Route::get('menus/{menuId}/items/create', [
+Route::get('menus/{menuId?}/items/create', [
     'as' => 'admin.menus.items.create',
     'uses' => 'MenuItemController@create',
     'middleware' => 'can:admin.menu_items.create',
 ]);
 
-Route::post('menus/{menuId}/items', [
+Route::post('menus/{menuId?}/items', [
     'as' => 'admin.menus.items.store',
     'uses' => 'MenuItemController@store',
     'middleware' => 'can:admin.menu_items.create',
 ]);
 
-Route::get('menus/{menuId}/items/{id}/edit', [
+Route::get('menus/{menuId?}/items/{id}/edit', [
     'as' => 'admin.menus.items.edit',
     'uses' => 'MenuItemController@edit',
     'middleware' => 'can:admin.menu_items.edit',
 ]);
 
-Route::put('menus/{menuId}/items/{id}', [
+Route::put('menus/{menuId?}/items/{id}', [
     'as' => 'admin.menus.items.update',
     'uses' => 'MenuItemController@update',
     'middleware' => 'can:admin.menu_items.edit',

@@ -2,6 +2,7 @@
 
 return [
     'visit_store' => 'Visit Store',
+    'actions' => 'Actions',
     'form' => [
         'please_select' => 'Please Select',
     ],
@@ -13,6 +14,7 @@ return [
     'table' => [
         'status' => 'Status',
         'created' => 'Created',
+        'updated' => 'Updated',
         'date' => 'Date',
     ],
     'pagination' => [

@@ -17,7 +17,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="order clearfix">
+            <div class="clearfix order">
                 <h4>{{ trans('order::orders.order_information') }}</h4>
 
                 <div class="table-responsive">
@@ -64,9 +64,8 @@
 
                             <tr>
                                 <td>{{ trans('order::orders.payment_method') }}</td>
-                                <td>{{ $order->payment_method }}</td>
+                                <td>{{ $order->payment_method_label }}</td>
                             </tr>
-
 
 
                             @if (is_multilingual())

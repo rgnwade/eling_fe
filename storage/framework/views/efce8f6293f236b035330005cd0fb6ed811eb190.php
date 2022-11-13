@@ -4,6 +4,9 @@
     data-arrows="<?php echo e($slider->arrows); ?>"
 >
     <?php $__currentLoopData = $slider->slides; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $slide): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <?php if(is_null($slide->call_to_action_text)): ?>
+    <a href="<?php echo e($slide->call_to_action_url); ?>"  target="_blank" style="color: inherit;">
+    <?php endif; ?>
         <div class="slide">
             <div class="slider-image" style="background-image: url(<?php echo e($slide->file->path); ?>);"></div>
 
@@ -61,6 +64,9 @@
                 </div>
             </div>
         </div>
+    <?php if(is_null($slide->call_to_action_text)): ?>
+    </a>
+    <?php endif; ?>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
 

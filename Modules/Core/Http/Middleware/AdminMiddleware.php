@@ -13,7 +13,9 @@ class AdminMiddleware
      */
     protected $except = [
         'admin.login.*',
+        'vendor.login.*',
         'admin.reset.*',
+        'admin.index.index'
     ];
 
     /**

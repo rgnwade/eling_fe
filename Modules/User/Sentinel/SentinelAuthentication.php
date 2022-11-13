@@ -7,8 +7,9 @@ use Modules\User\Entities\User;
 use Modules\User\Contracts\Authentication;
 use Cartalyst\Sentinel\Laravel\Facades\Reminder;
 use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
-use Modules\User\Events\UserHasActivatedAccount;
 use Cartalyst\Sentinel\Laravel\Facades\Activation;
+use Modules\User\Events\UserHasActivatedAccount;
+
 
 class SentinelAuthentication implements Authentication
 {
@@ -57,9 +58,12 @@ class SentinelAuthentication implements Authentication
     {
         $user = Sentinel::findById($userId);
 
-        if (Activation::complete($user, $code)) {
+        $success = Activation::complete($user, $code);
+
+        if ($success) {
             event(new UserHasActivatedAccount($user));
         }
+        return $success;
     }
 
     /**

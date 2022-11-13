@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
 use Modules\Admin\Ui\Facades\TabManager;
 use Modules\Setting\Http\Requests\UpdateSettingRequest;
+use Modules\Media\Entities\File;
 
 class SettingController extends Controller
 {

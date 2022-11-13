@@ -1,0 +1,58 @@
+.merchant-logo {
+    width: 90%;
+    height: 90%;
+    margin: 5px 10px;
+    padding: 5px 10px;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14) !important;
+}
+
+.merchant-logo-wrapper {
+    width: 75%;
+    text-align: center;
+
+    .btn {
+        padding: 6px 12px;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .rating i {
+        margin-top: 5px;
+        color: #d9d9d9;
+    }
+}
+
+.merchant-info-body {
+    h5 {
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 14px;
+        line-height: 18px;
+        letter-spacing: 0.2px;
+        color: #626060;
+    }
+
+    margin: 20px;
+}
+
+.merchant-gallery {
+    .slick-next {
+        text-shadow: 2px 2px 4px #000000;
+    }
+
+    .slick-prev {
+        text-shadow: 2px 2px 4px #000000;
+    }
+}
+
+.merchant-social {
+    margin-left: 25px;
+    padding-top: 10px;
+
+    span {
+        font-size: 14px;
+    }
+}

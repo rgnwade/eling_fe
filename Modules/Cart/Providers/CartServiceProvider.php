@@ -53,7 +53,7 @@ class CartServiceProvider extends ServiceProvider
                 $app['events'],
                 'cart',
                 session()->getId(),
-                config('modules.cart.config')
+                config('shopping_cart')
             );
         });
 

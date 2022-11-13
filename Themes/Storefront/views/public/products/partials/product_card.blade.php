@@ -17,15 +17,16 @@
                 </div>
             @else
                 <div class="image-holder">
-                    <img src="{{ $product->base_image->path }}">
+                    <img src="{{ $product->base_image->thumb }}">
                 </div>
             @endif
-
+            @if (!$product->isVideotron())   
             <div class="quick-view-wrapper" data-toggle="tooltip" data-placement="top" title="{{ trans('storefront::product_card.quick_view') }}">
                 <button type="button" class="btn btn-quick-view" data-slug="{{ $product->slug }}">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                 </button>
             </div>
+            @endif
         </div>
 
         <div class="product-content clearfix">
@@ -44,16 +45,15 @@
                 </button>
             </form>
 
-            @if ($product->options_count > 0)
+            @if ($product->options_count > 0 || $product->isVideotron())
                 <button class="btn btn-default btn-add-to-cart" onClick="location = '{{ route('products.show', ['slug' => $product->slug]) }}'">
                     {{ trans('storefront::product_card.view_details') }}
                 </button>
             @else
                 <form method="POST" action="{{ route('cart.items.store') }}">
                     {{ csrf_field() }}
-
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
-                    <input type="hidden" name="qty" value="1">
+                    <input type="hidden" name="qty" value="{{$product->minimum_order}}">
 
                     <button class="btn btn-default btn-add-to-cart" {{ $product->isOutOfStock() ? 'disabled' : '' }}>
                         {{ trans('storefront::product_card.add_to_cart') }}

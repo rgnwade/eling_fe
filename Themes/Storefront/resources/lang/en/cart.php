@@ -7,6 +7,7 @@ return [
     'price' => 'Price',
     'quantity' => 'Quantity',
     'shipping_method' => 'Shipping Method',
+    'shipping_total' => 'Ongkos Kirim',
     'total' => 'Total',
     'update' => 'Update',
     'remove' => 'Remove',

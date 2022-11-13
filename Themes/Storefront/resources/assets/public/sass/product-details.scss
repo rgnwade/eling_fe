@@ -858,6 +858,10 @@
 	}
 }
 
+.displaynone {
+    display: none;
+}
+
 @media screen and (max-width: 420px) {
 	.product-details .add-to {
 		a:last-child {

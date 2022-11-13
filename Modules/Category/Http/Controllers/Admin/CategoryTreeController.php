@@ -2,12 +2,11 @@
 
 namespace Modules\Category\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller;
 use Modules\Category\Entities\Category;
 use Modules\Category\Services\CategoryTreeUpdater;
 use Modules\Category\Http\Responses\CategoryTreeResponse;
 
-class CategoryTreeController extends Controller
+class CategoryTreeController
 {
     /**
      * Display category tree in json.

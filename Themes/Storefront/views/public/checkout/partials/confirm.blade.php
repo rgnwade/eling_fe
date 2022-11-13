@@ -6,7 +6,7 @@
 
         <div class="order-list cart-list">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" >
                     <tbody>
                         @foreach ($cart->items() as $cartItem)
                             <tr>
@@ -41,10 +41,18 @@
 
                                 <td>
                                     <label>{{ trans('storefront::checkout.tabs.confirm.quantity') }}:</label>
-                                    <span>{{ intl_number($cartItem->qty) }}</span>
+                                    @if($cartItem->product->isVideotron())
+                                        <span style="font-weight: bold">{{ intl_number($cartItem->details['width']) }} X {{ intl_number($cartItem->details['length']) }} = {{ intl_number($cartItem->qty) }}  {{ $cartItem->product->unit }}</span>
+                                    @else
+                                        <span style="font-weight: bold">{{ intl_number($cartItem->qty) }}  {{ $cartItem->product->unit }}</span>
+                                    @endif
                                     <br>
                                      <label>{{  trans('product::attributes.weight') }}:
                                                    {{ $cartItem->product->weight }} kg  </label>
+
+                                     <br>
+                                     <label>{{  trans('product::attributes.seller') }}:
+                                                   {{ $cartItem->company()->name }}  </label>
                                 </td>
 
                                 <td>

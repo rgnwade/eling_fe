@@ -14,6 +14,6 @@ class IncrementProductView
      */
     public function handle(ProductViewed $event)
     {
-        $event->product->increment('viewed');
+        // $event->product->increment('viewed');
     }
 }

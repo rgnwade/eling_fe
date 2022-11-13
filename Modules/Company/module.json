@@ -1,0 +1,10 @@
+{
+    "name": "Company",
+    "alias": "company",
+    "description": "Company",
+    "order": 100,
+    "providers": [
+        "Modules\\Company\\Providers\\CompanyServiceProvider",
+        "Modules\\Company\\Providers\\RouteServiceProvider"
+    ]
+}

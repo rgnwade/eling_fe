@@ -2,6 +2,7 @@
 
 return [
     'media' => 'Media',
+    'no_file' => 'No File',
     'drop_files_here' => 'Drop files here or click to upload',
     'upload_new_file' => 'Upload New File',
     'browse' => 'Browse',

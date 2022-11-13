@@ -12,6 +12,12 @@ Route::post('media', [
     'middleware' => 'can:admin.media.create',
 ]);
 
+Route::post('mediaFile', [
+    'as' => 'admin.media.storeFile',
+    'uses' => 'MediaController@storeFile',
+    'middleware' => 'can:admin.media.create',
+]);
+
 Route::delete('media/{ids?}', [
     'as' => 'admin.media.destroy',
     'uses' => 'MediaController@destroy',

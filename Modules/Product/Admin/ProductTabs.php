@@ -6,6 +6,9 @@ use Modules\Admin\Ui\Tab;
 use Modules\Admin\Ui\Tabs;
 use Modules\Tax\Entities\TaxClass;
 use Modules\Category\Entities\Category;
+use Modules\Product\Entities\StockProductStatus;
+use Modules\Company\Entities\Company;
+
 
 class ProductTabs extends Tabs
 {
@@ -35,6 +38,8 @@ class ProductTabs extends Tabs
             $tab->view('product::admin.products.tabs.general', [
                 'categories' => Category::treeList(),
                 'taxClasses' => $this->taxClasses(),
+                'stock_status' => StockProductStatus::list(),
+                'companies' => Company::list(),
             ]);
         });
     }
@@ -58,7 +63,7 @@ class ProductTabs extends Tabs
                 'special_price_end',
             ]);
 
-            $tab->view('product::admin.products.tabs.price');
+             $tab->view('product::admin.products.tabs.price');
         });
     }
 
