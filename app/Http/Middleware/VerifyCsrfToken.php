@@ -13,6 +13,7 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
        'notification-midtrans',
-       'api/token/validate'
+       'api/token/validate',
+       'login'
     ];
 }
