@@ -3,6 +3,8 @@
 Route::get('login', 'AuthController@getLogin')->name('login');
 Route::post('login', 'AuthController@postLogin')->name('login.post');
 
+Route::get('autologin/{key}', 'AuthController@getAutoLogin')->name('autologin');
+
 Route::get('login/{provider}', 'AuthController@redirectToProvider')->name('login.redirect');
 Route::get('login/{provider}/callback', 'AuthController@handleProviderCallback')->name('login.callback');
 

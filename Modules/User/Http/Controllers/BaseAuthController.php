@@ -22,9 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Session;
 use Auth;
-
 
 
 abstract class BaseAuthController extends Controller
@@ -93,20 +91,12 @@ abstract class BaseAuthController extends Controller
                     ->withError(trans('user::messages.users.invalid_credentials'));
             } else {
                 $token = Str::random(80);
-                $api_token = hash('sha256', $token);
                 $loggedIn->forceFill([
-                    'api_token' => $api_token,
+                    'api_token' => hash('sha256', $token),
                 ])->save();
             }
-
-            $token_ses = $user_id=Auth::user()->api_token;
-
-            if ($_SERVER['HTTP_REFERER'] == 'https://staging.eling.co.id/products?category=makanan-dan-minuman&sort=latest&nonce='.$token_ses.'') {
-                return redirect()->intended($this->redirectTo());
-                }else{
+            
             return redirect()->intended($this->redirectTo());
-                }
-
         } catch (NotActivatedException $e) {
             return back()->withInput()
                 ->withError(trans('user::messages.users.account_not_activated'));
@@ -280,4 +270,18 @@ abstract class BaseAuthController extends Controller
         return redirect($this->loginUrl())
             ->withSuccess(trans('user::messages.users.password_has_been_reset'));
     }
+    
+
+    public function getAutoLogin($key)
+    {
+        $user = User::where('api_token', $key)->firstOrFail();
+
+        if($user){
+            Auth::login($user); // login user automatically
+            return redirect('/');
+      }else{
+            return "User not found!";
+      }
+    }
+
 }
