@@ -22,6 +22,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Session;
+use Auth;
+
 
 
 abstract class BaseAuthController extends Controller
@@ -90,14 +93,19 @@ abstract class BaseAuthController extends Controller
                     ->withError(trans('user::messages.users.invalid_credentials'));
             } else {
                 $token = Str::random(80);
+                $api_token = hash('sha256', $token);
                 $loggedIn->forceFill([
-                    'api_token' => hash('sha256', $token),
+                    'api_token' => $api_token,
                 ])->save();
             }
 
+            $token_ses = $user_id=Auth::user()->api_token;
 
-
+            if($token_ses !== null){
             return redirect()->intended($this->redirectTo());
+            }
+
+
         } catch (NotActivatedException $e) {
             return back()->withInput()
                 ->withError(trans('user::messages.users.account_not_activated'));
