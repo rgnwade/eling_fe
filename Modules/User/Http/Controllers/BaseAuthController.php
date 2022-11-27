@@ -101,10 +101,11 @@ abstract class BaseAuthController extends Controller
 
             $token_ses = $user_id=Auth::user()->api_token;
 
-            if($token_ses !== null){
+            if ($_SERVER['HTTP_REFERER'] == 'https://staging.eling.co.id/products?category=makanan-dan-minuman&sort=latest&nonce='.$token_ses.'') {
+                return redirect()->intended($this->redirectTo());
+                }else{
             return redirect()->intended($this->redirectTo());
-            }
-
+                }
 
         } catch (NotActivatedException $e) {
             return back()->withInput()
