@@ -193,7 +193,7 @@
     </div>
 </footer>
 <!-- Popup -->
-@if (request()->path()] == '78')
+@if (request()->path() == '78')
 <div class="custom-model-main">
     <div id="inner-popup" class="custom-model-inner">        
     <div class="close-btn">×</div>
