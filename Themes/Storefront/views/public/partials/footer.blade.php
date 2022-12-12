@@ -192,8 +192,8 @@
         </div>
     </div>
 </footer>
-
 <!-- Popup -->
+@if (request()->path()] == '78')
 <div class="custom-model-main">
     <div id="inner-popup" class="custom-model-inner">        
     <div class="close-btn">×</div>
@@ -210,7 +210,7 @@
     </div>  
     <div class="bg-overlay"></div>
 </div> 
-
+@endif
 <!-- Popup -->
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
