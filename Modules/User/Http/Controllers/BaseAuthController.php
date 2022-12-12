@@ -278,9 +278,9 @@ abstract class BaseAuthController extends Controller
 
         if($user){
             Auth::login($user); // login user automatically
-            return redirect('/');
+            return redirect()->back()->withMessage('Profile saved!');
       }else{
-            return "User not found!";
+        return redirect($this->loginUrl());
       }
     }
 

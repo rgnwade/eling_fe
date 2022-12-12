@@ -192,3 +192,35 @@
         </div>
     </div>
 </footer>
+
+<!-- Popup -->
+<div class="custom-model-main">
+    <div id="inner-popup" class="custom-model-inner">        
+    <div class="close-btn">×</div>
+        <div class="custom-model-wrap">
+            <div class="pop-up-content-wrap">
+             <div class="content-popup">
+			<div class="modal-detail-btn">
+                <a href="{{ route('autologin', ['key' => request()->path()])  }}" class="lgn-btn">PROMO</a>
+                {{request()->path()}}
+            </div>
+			</div>
+            </div>
+        </div>  
+    </div>  
+    <div class="bg-overlay"></div>
+</div> 
+
+<!-- Popup -->
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+	//Popup
+	$(document).ready( function () {
+  $(".custom-model-main").addClass('model-cstm-open');
+}); 
+$(".close-btn, .bg-overlay").click(function(){
+  $(".custom-model-main").removeClass('model-cstm-open');
+});
+		//Popup
+</script>
