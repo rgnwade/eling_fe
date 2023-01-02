@@ -272,8 +272,31 @@ abstract class BaseAuthController extends Controller
     }
     
 
-    public function getAutoLogin($key)
+    // public function getAutoLogin($key)
+    // {
+    //     $user = auth()->user();
+      
+    //     $user = User::where('api_token', $key)->firstOrFail();
+
+    //     if($user){
+    //         Auth::login($user); // login user automatically
+    //         return redirect()->back()->withMessage('Profile saved!');
+    //   }else{
+    //     return redirect($this->loginUrl());
+    //   }
+    // }
+
+
+    public function getAutoLogin(Request $request)
     {
+        // $user = auth()->user();
+
+        // $nonce = session()->get('nonce'); 
+
+        $uri = $request->path();
+
+        dd($uri);
+      
         $user = User::where('api_token', $key)->firstOrFail();
 
         if($user){
