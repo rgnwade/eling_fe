@@ -20,7 +20,7 @@ class getTokenUser
         //   }
         //  return redirect('/');   
 
-        $cur_url = $request->nonce();
+        $cur_url = $request->nonce;
         
             dd($cur_url);
             return $next($request);
