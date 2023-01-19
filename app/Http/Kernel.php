@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \FleetCart\Http\Middleware\TrustProxies::class,
         \FleetCart\Http\Middleware\RedirectToInstallerIfNotInstalled::class,
         \FleetCart\Http\Middleware\RunUpdater::class,
+        \FleetCart\Http\Middleware\getTokenUser::class,
     ];
 
     /**
@@ -54,5 +55,6 @@ class Kernel extends HttpKernel
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         '2fa' => \PragmaRX\Google2FALaravel\Middleware::class,
+        'getToken' => \App\Http\Middleware\getTokenUser::class,
     ];
 }
