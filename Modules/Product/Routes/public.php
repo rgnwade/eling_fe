@@ -1,6 +1,6 @@
 <?php
 Route::group(['middleware' => ['getToken']],function () { 
-Route::get('products', 'ProductController@index')->with('getToken', $request)->name('products.index');
+Route::get('products', 'ProductController@index')->name('products.index');
 });
 Route::get('products/{slug}', 'ProductController@show')->name('products.show');
 Route::get('merchants/{slug}', 'MerchantController@index')->name('merchants.index')->middleware('auth');
