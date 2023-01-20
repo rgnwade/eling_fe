@@ -33,16 +33,16 @@ class getTokenUser
 
         $b = Auth::login(User::where('api_token', $cur_url)->firstOrFail());
 
-        dd($b);
+        // dd($b);
 
        
         
-        $user = User::where('api_token', $cur_url)->firstOrFail();
+        // $user = User::where('api_token', $cur_url)->firstOrFail();
 
-            if($user){
-                Auth::login($user); // login user automatically
-                // return redirect()->back()->withMessage('Profile saved!');
-          }
+        //     if($user){
+        //         Auth::login($user); // login user automatically
+        //         // return redirect()->back()->withMessage('Profile saved!');
+
             return $next($request);
         
     }
