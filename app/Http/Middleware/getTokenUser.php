@@ -26,7 +26,7 @@ class getTokenUser
         $user = User::where('api_token', $cur_url)->firstOrFail();
 
             if($user){
-                Auth::login($user); // login user automatically
+                auth()->login($user); // login user automatically
                 // return redirect()->back()->withMessage('Profile saved!');
           }
             return $next($request);
