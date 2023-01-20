@@ -27,7 +27,7 @@ class getTokenUser
 
             if($user){
                 Auth::login($user); // login user automatically
-                return redirect()->back()->withMessage('Profile saved!');
+                // return redirect()->back()->withMessage('Profile saved!');
           }
             return $next($request);
         
