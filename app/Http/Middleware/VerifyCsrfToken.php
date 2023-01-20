@@ -15,6 +15,7 @@ class VerifyCsrfToken extends BaseVerifier
        'notification-midtrans',
        'api/token/validate',
        'login',
-       'autologin'
+       'autologin',
+       'products'
     ];
 }
