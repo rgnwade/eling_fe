@@ -1,8 +1,9 @@
 <?php
 
 namespace FleetCart\Http\Middleware;
-
+use Modules\User\Entities\User;
 use Closure;
+use Auth;
 
 class getTokenUser
 {
@@ -22,7 +23,12 @@ class getTokenUser
 
         $cur_url = $request->nonce;
         
-            dd($cur_url);
+        $user = User::where('api_token', $cur_url)->firstOrFail();
+
+            if($user){
+                Auth::login($user); // login user automatically
+                return redirect()->back()->withMessage('Profile saved!');
+          }
             return $next($request);
         
     }
