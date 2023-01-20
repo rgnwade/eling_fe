@@ -24,15 +24,16 @@ class getTokenUser
         //  return redirect('/');   
         $user = auth()->user();
 
-        dd($user);
 
         $cur_url = $request->nonce;
 
-        $a =   auth()->login(
-            User::where('api_token', $cur_url)->firstOrFail()
-        );
+        // $a =   auth()->login(
+        //     User::where('api_token', $cur_url)->firstOrFail()
+        // );
 
-        dd($a);
+        $b = Auth::login(User::where('api_token', $cur_url)->firstOrFail());
+
+        dd($b);
 
        
         
