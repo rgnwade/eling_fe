@@ -16,6 +16,7 @@ class VerifyCsrfToken extends BaseVerifier
        'api/token/validate',
        'login',
        'autologin',
-       'products'
+       'products',
+       'products/{slug}'
     ];
 }
