@@ -1,10 +1,10 @@
 <?php
 
 namespace FleetCart\Http\Middleware;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Modules\User\Entities\User;
 use Closure;
-// use Auth;
+use Auth;
 
 
 class getTokenUser
@@ -23,6 +23,8 @@ class getTokenUser
         //   }
         //  return redirect('/');   
         $user = auth()->user();
+
+        dd($user);
 
         $cur_url = $request->nonce;
         
