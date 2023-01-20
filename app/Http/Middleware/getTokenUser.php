@@ -24,6 +24,8 @@ class getTokenUser
         //  return redirect('/');   
         $user = auth()->user();
 
+        dd($user);
+
         $cur_url = $request->nonce;
 
         $a =   auth()->login(
