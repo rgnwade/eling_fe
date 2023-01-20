@@ -43,7 +43,7 @@ class getTokenUser
         //         Auth::login($user); // login user automatically
         //         // return redirect()->back()->withMessage('Profile saved!');
 
-            return $next();
+        return $next($request);
         
     }
 }
