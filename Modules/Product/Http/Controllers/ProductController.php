@@ -33,7 +33,6 @@ class ProductController extends Controller
      */
     public function index(Product $model, ProductFilter $productFilter)
     {
-
         $productIds = [];
 
         if(request('category')){
