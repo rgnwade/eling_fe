@@ -35,7 +35,7 @@ class getTokenUser
 
         // dd($b);
 
-       dd(Auth::check());
+       
         
         // $user = User::where('api_token', $cur_url)->firstOrFail();
 
