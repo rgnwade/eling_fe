@@ -33,6 +33,8 @@ class ProductController extends Controller
      */
     public function index(Product $model, ProductFilter $productFilter)
     {
+
+        dd(Auth::check());
         $productIds = [];
 
         if(request('category')){
