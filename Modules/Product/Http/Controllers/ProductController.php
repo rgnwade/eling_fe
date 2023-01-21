@@ -77,8 +77,6 @@ class ProductController extends Controller
         $upSellProducts = $product->upSellProducts()->forCard()->get();
         $reviews = $this->getReviews($product);
         $user = Auth::user();
-
-        dd($user);
         $chat = array();
         if ($user != null) {
             $chat = Chat::properties($user, $product->company);
